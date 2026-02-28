@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>2026 工作日看板</title>
+    <style>
+      :root {
+        --bg-color: #f2f2f7; /* iOS System Gray 6 */
+        --card-bg: #ffffff;
+        --text-main: #000000;
+        --text-sec: #8e8e93; /* iOS System Gray */
+        --blue: #007aff; /* iOS Blue */
+        --red: #ff3b30; /* iOS Red */
+        --green: #34c759; /* iOS Green */
+        --border: #e5e5ea; /* iOS separator */
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+          Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 16px;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden; /* 禁用全局滚动 */
+        position: relative; /* 为词云层提供定位参考 */
+      }
+
+      /* 主体应用容器 - 提权盖在词云之上 */
+      .app-container {
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        height: 100%;
+        z-index: 10;
+      }
+
+      /* 优化：增加高级质感阴影 */
+      .card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 12px 16px;
+        /* 两层阴影：一层大的环境光晕，一层小的实体投影 */
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.03),
+          0 1px 3px rgba(0, 0, 0, 0.06);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 8px 24px rgba(0, 0, 0, 0.04),
+          0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+
+      /* 头部状态 */
+      .header {
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+      .header .subtitle {
+        font-size: 12px;
+        color: var(--text-sec);
+        margin: 0;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-left: 6px;
+      }
+      .status-work {
+        background: rgba(0, 122, 255, 0.1);
+        color: var(--blue);
+      }
+      .status-rest {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--green);
+      }
+
+      /* 统计区块 */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .list-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .list-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-sec);
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        font-size: 13px;
+        border-bottom: 0.5px solid var(--border);
+      }
+      .list-item:last-child {
+        border-bottom: none;
+      }
+      .val {
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+
+      /* 进度条 */
+      .progress-wrapper {
+        margin-top: 8px;
+      }
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--text-sec);
+        margin-bottom: 4px;
+      }
+      .progress-track {
+        height: 6px;
+        background-color: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background-color: var(--blue);
+        width: 0%;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+      }
+
+      /* 日历区域 */
+      .calendar-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 8px 12px;
+      }
+      .cal-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .cal-controls button {
+        background: none;
+        border: none;
+        color: var(--blue);
+        font-size: 14px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .cal-controls span {
+        font-size: 14px;
+        font-weight: 600;
+        font-feature-settings: "tnum";
+      }
+
+      .cal-grid {
+        flex: 1;
+        display: grid;
+        grid-template-rows: auto repeat(6, 1fr);
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+      }
+      .cal-lbl {
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-sec);
+        font-weight: 500;
+        align-self: end;
+        padding-bottom: 4px;
+      }
+
+      /* 日历单格 */
+      .cal-day {
+        background-color: var(--bg-color);
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column; /* 改为上下排布 */
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-weight: 400;
+      }
+      /* 日期主数字层 */
+      .cal-day > span.day-num {
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+        line-height: 1.2;
+      }
+
+      .cal-day.empty {
+        background: none;
+      }
+
+      /* 状态色 */
+      .day-work {
+        color: var(--text-main);
+      }
+      .day-rest {
+        color: var(--text-sec);
+        background-color: #f9f9f9;
+      }
+      .day-holiday {
+        color: var(--red);
+        background-color: #fff2f2;
+        font-weight: 500;
+      }
+
+      /* 
+           优化：修复今日高亮圆圈问题
+        */
+      .day-today {
+        color: white !important;
+      }
+      .day-today::before {
+        content: "";
+        position: absolute;
+        width: clamp(28px, 90%, 34px); /* 稍微调大一点保证能包裹上下两排文字 */
+        aspect-ratio: 1;
+        background-color: var(--blue);
+        border-radius: 50%;
+        z-index: 0;
+        /* 加一点内阴影提升质感 */
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
+      }
+
+      /* 角标精细调整，恢复为上下布局的下半部分 */
+      .badge {
+        position: relative; /* 放弃 absolute，改回内部流布局定位 */
+        font-size: 9px;
+        color: var(--blue);
+        font-weight: 600;
+        line-height: 1;
+        margin-top: 1px;
+        z-index: 1;
+        transform: scale(0.85); /* 稍微缩放一点让它不盖住主体字 */
+      }
+      /* 今天是工作日，角标变成半透明白 */
+      .day-today .badge {
+        color: rgba(255, 255, 255, 0.85);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="header">
+        <h1>2026 工作看板</h1>
+        <p class="subtitle" id="date-subtitle"></p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="card list-group">
+          <div class="list-title" id="month-title">本月</div>
+          <div class="list-item">
+            <span>已搬砖</span>
+            <span class="val" style="color: var(--blue)" id="m-pass">0</span>
+          </div>
+          <div class="list-item">
+            <span>余量</span>
+            <span class="val" id="m-rem">0</span>
+          </div>
+        </div>
+
+        <div class="card list-group">
+          <div class="list-title">2026 全年</div>
+          <div class="list-item">
+            <span>已搬砖</span>
+            <span class="val" style="color: var(--blue)" id="y-pass">0</span>
+          </div>
+          <div class="list-item">
+            <span>余量</span>
+            <span class="val" id="y-rem">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card progress-wrapper">
+        <div class="progress-header">
+          <span>年度进度</span>
+          <span id="prog-txt">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="prog-bar"></div>
+        </div>
+      </div>
+
+      <div class="card calendar-section">
+        <div class="cal-controls">
+          <button onclick="changeMonth(-1)">&#10094; 上月</button>
+          <span id="cal-lbl">2026年 --月</span>
+          <button onclick="changeMonth(1)">下月 &#10095;</button>
+        </div>
+        <div class="cal-grid" id="cal-grid">
+          <!-- JS 渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===================================
+      // 核心业务逻辑
+      // ===================================
+      const DATA = {
+        h: new Set([
+          "2026-01-01",
+          "2026-01-02",
+          "2026-01-03",
+          "2026-02-15",
+          "2026-02-16",
+          "2026-02-17",
+          "2026-02-18",
+          "2026-02-19",
+          "2026-02-20",
+          "2026-02-21",
+          "2026-02-22",
+          "2026-02-23",
+          "2026-04-04",
+          "2026-04-05",
+          "2026-04-06",
+          "2026-05-01",
+          "2026-05-02",
+          "2026-05-03",
+          "2026-05-04",
+          "2026-05-05",
+          "2026-06-19",
+          "2026-06-20",
+          "2026-06-21",
+          "2026-09-25",
+          "2026-09-26",
+          "2026-09-27",
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04",
+          "2026-10-05",
+          "2026-10-06",
+          "2026-10-07",
+        ]),
+        w: new Set([
+          "2026-01-04",
+          "2026-02-14",
+          "2026-02-28",
+          "2026-04-26",
+          "2026-05-10",
+          "2026-09-20",
+          "2026-09-28",
+          "2026-10-10",
+        ]),
+      };
+
+      const sysT = new Date();
+      const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 1, 28);
+      let viewM = t.getMonth();
+
+      const fmt = (d) =>
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0");
+
+      function isWork(date) {
+        const s = fmt(date);
+        if (DATA.w.has(s)) return true;
+        if (DATA.h.has(s)) return false;
+        const d = date.getDay();
+        return d > 0 && d < 6;
+      }
+
+      function calc() {
+        let yp = 0,
+          yt = 0,
+          mp = 0,
+          mr = 0;
+        const s = new Date(2026, 0, 1),
+          e = new Date(2026, 11, 31);
+
+        for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+          const w = isWork(d);
+          if (w) {
+            yt++;
+            if (d <= t) yp++;
+          }
+          if (d.getMonth() === t.getMonth() && w) {
+            if (d <= t) mp++;
+            else mr++;
+          }
+        }
+
+        document.getElementById("y-pass").innerText = yp;
+        document.getElementById("y-rem").innerText = yt - yp;
+        document.getElementById("m-pass").innerText = mp;
+        document.getElementById("m-rem").innerText = mr;
+        document.getElementById("month-title").innerText =
+          `${t.getMonth() + 1}月`;
+
+        const pct = ((yp / yt) * 100).toFixed(1);
+        document.getElementById("prog-txt").innerText = pct + "%";
+        setTimeout(() => {
+          document.getElementById("prog-bar").style.width = pct + "%";
+        }, 100);
+
+        const tWork = isWork(t);
+        const tag = tWork
+          ? `<span class="status-badge status-work">工作日</span>`
+          : `<span class="status-badge status-rest">休息日</span>`;
+        document.getElementById("date-subtitle").innerHTML =
+          `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日 星期${["日", "一", "二", "三", "四", "五", "六"][t.getDay()]} ${tag}`;
+      }
+
+      function buildCal(y, m) {
+        const grid = document.getElementById("cal-grid");
+        grid.innerHTML = "";
+        document.getElementById("cal-lbl").innerText = `${y}年 ${m + 1}月`;
+
+        // 标头
+        ["日", "一", "二", "三", "四", "五", "六"].forEach((txt) => {
+          const di = document.createElement("div");
+          di.className = "cal-lbl";
+          di.innerText = txt;
+          grid.appendChild(di);
+        });
+
+        const firstD = new Date(y, m, 1).getDay();
+        const days = new Date(y, m + 1, 0).getDate();
+
+        for (let i = 0; i < firstD; i++) {
+          const di = document.createElement("div");
+          di.className = "cal-day empty";
+          grid.appendChild(di);
+        }
+
+        let wCnt = 0;
+        const todayStr = fmt(t);
+
+        for (let day = 1; day <= days; day++) {
+          const date = new Date(y, m, day);
+          const str = fmt(date);
+          const work = isWork(date);
+
+          if (work) wCnt++;
+
+          const di = document.createElement("div");
+          di.className = "cal-day";
+
+          if (work) di.classList.add("day-work");
+          else if (DATA.h.has(str)) di.classList.add("day-holiday");
+          else di.classList.add("day-rest");
+
+          if (str === todayStr) {
+            di.classList.add("day-today");
+          }
+
+          // 用内层 span 保护日期数字的独立层级，分离为单独的 HTML
+          let innerHTML = `<span class="day-num">${day}</span>`;
+
+          if (work) {
+            innerHTML += `<span class="badge">W${wCnt}</span>`;
+          }
+
+          di.innerHTML = innerHTML;
+          grid.appendChild(di);
+        }
+      }
+
+      function changeMonth(d) {
+        viewM += d;
+        if (viewM > 11) {
+          viewM = 0;
+        }
+        if (viewM < 0) {
+          viewM = 11;
+        }
+        buildCal(2026, viewM);
+      }
+
+      calc();
+      buildCal(2026, viewM);
+    </script>
+  </body>
+</html>
