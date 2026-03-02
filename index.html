@@ -7,6 +7,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title>2026 工作日看板</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
       :root {
         --bg-color: #f8f9ff;
@@ -28,8 +29,13 @@
 
       body {
         font-family:
-          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
-          Arial, sans-serif;
+          "PingFang SC",
+          -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Text",
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
         background: radial-gradient(circle at top right, #eef2ff, #f8f9ff);
         color: var(--text-main);
         margin: 0;
@@ -232,12 +238,10 @@
         background: none;
       }
 
-      .day-holiday {
+      .day-holiday,
+      .day-rest {
         color: var(--red);
         background-color: #fff2f2;
-      }
-      .day-rest {
-        color: var(--text-sec);
       }
       .day-work {
         color: var(--text-main);
@@ -331,7 +335,10 @@
           <div class="stats-grid">
             <div class="card">
               <div class="list-title">
-                <span id="month-title">--月</span><span>MONTH</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-calendar-blank"></i>
+                  <span id="month-title">--月</span></span
+                ><span>MONTH</span>
               </div>
               <div class="list-item">
                 <span>已完成</span
@@ -345,7 +352,9 @@
             </div>
             <div class="card">
               <div class="list-title">
-                <span>2026 全年</span><span>YEAR</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-clock"></i> <span>2026 全年</span></span
+                ><span>YEAR</span>
               </div>
               <div class="list-item">
                 <span>已完成</span
@@ -362,7 +371,10 @@
           <div class="stats-grid">
             <div class="card">
               <div class="list-title">
-                <span>假期余额(除周末)</span><span>HOLIDAY</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-coffee"></i>
+                  <span>假期余额(除周末)</span></span
+                ><span>HOLIDAY</span>
               </div>
               <div class="list-item">
                 <span>已过假日</span
@@ -379,7 +391,10 @@
             </div>
             <div class="card">
               <div class="list-title">
-                <span>拼假攻略(2026)</span><span>TIPS</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-lightbulb"></i>
+                  <span>拼假攻略(2026)</span></span
+                ><span>TIPS</span>
               </div>
               <div
                 style="
@@ -389,11 +404,41 @@
                   padding-top: 2px;
                 "
               >
-                <div style="margin-bottom: 4px">
-                  🧨 <b>春节：</b>请4天休15天
+                <div
+                  style="
+                    margin-bottom: 4px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                  "
+                >
+                  <i
+                    class="ph-fill ph-fire"
+                    style="color: var(--red); font-size: 14px"
+                  ></i>
+                  <b>春节：</b>请4天休15天
                 </div>
-                <div style="margin-bottom: 4px">🎯 <b>五一：</b>请4天休9天</div>
-                <div>🏮 <b>国庆：</b>请3天休13天</div>
+                <div
+                  style="
+                    margin-bottom: 4px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                  "
+                >
+                  <i
+                    class="ph-fill ph-target"
+                    style="color: var(--blue); font-size: 14px"
+                  ></i>
+                  <b>五一：</b>请4天休9天
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px">
+                  <i
+                    class="ph-fill ph-confetti"
+                    style="color: #ff9500; font-size: 14px"
+                  ></i>
+                  <b>国庆：</b>请3天休13天
+                </div>
               </div>
             </div>
           </div>
@@ -401,7 +446,9 @@
           <div class="card progress-section">
             <div class="progress-group">
               <div class="progress-header">
-                <span>月度收益进度</span><span id="m-prog-txt">0%</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-chart-line-up"></i> 月度收益进度</span
+                ><span id="m-prog-txt">0%</span>
               </div>
               <div class="progress-track">
                 <div class="progress-fill" id="m-prog-bar"></div>
@@ -409,7 +456,9 @@
             </div>
             <div class="progress-group">
               <div class="progress-header">
-                <span>年度搬砖里程</span><span id="y-prog-txt">0%</span>
+                <span style="display: flex; align-items: center; gap: 4px"
+                  ><i class="ph ph-map-trifold"></i> 年度搬砖里程</span
+                ><span id="y-prog-txt">0%</span>
               </div>
               <div class="progress-track">
                 <div class="progress-fill" id="y-prog-bar"></div>
@@ -421,9 +470,18 @@
         <!-- 日历列 -->
         <div class="card calendar-section">
           <div class="cal-controls">
-            <button onclick="changeMonth(-1)"><b>&lt;</b></button>
-            <span id="cal-lbl">2026年 --月</span>
-            <button onclick="changeMonth(1)"><b>&gt;</b></button>
+            <button onclick="changeMonth(-1)">
+              <i class="ph-bold ph-caret-left"></i>
+            </button>
+            <span
+              id="cal-lbl"
+              style="display: flex; align-items: center; gap: 6px"
+              ><i class="ph-bold ph-calendar-blank"></i>
+              <span id="cal-lbl-text">2026年 --月</span></span
+            >
+            <button onclick="changeMonth(1)">
+              <i class="ph-bold ph-caret-right"></i>
+            </button>
           </div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
@@ -556,7 +614,7 @@
       function buildCal(y, m) {
         const grid = document.getElementById("cal-grid");
         grid.innerHTML = "";
-        document.getElementById("cal-lbl").innerText = `${y}年 ${m + 1}月`;
+        document.getElementById("cal-lbl-text").innerText = `${y}年 ${m + 1}月`;
 
         ["日", "一", "二", "三", "四", "五", "六"].forEach((txt) => {
           const di = document.createElement("div");
