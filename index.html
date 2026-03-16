@@ -526,8 +526,12 @@
           document.getElementById("y-prog-bar").style.width = yPct + "%";
           document.getElementById("m-prog-bar").style.width = mPct + "%";
         }, 300);
-        const tag = isWork(t) ? `<span class="status-badge status-work">搬砖中</span>` : `<span class="status-badge status-rest">回血中</span>`;
-        document.getElementById("date-subtitle").innerHTML = `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日 星期${["日", "一", "二", "三", "四", "五", "六"][t.getDay()]} ${tag}`;
+        const subtitle = document.getElementById("date-subtitle");
+        subtitle.textContent = `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日 星期${["日", "一", "二", "三", "四", "五", "六"][t.getDay()]} `;
+        const tag = document.createElement("span");
+        tag.className = isWork(t) ? "status-badge status-work" : "status-badge status-rest";
+        tag.textContent = isWork(t) ? "搬砖中" : "回血中";
+        subtitle.appendChild(tag);
       }
 
       function buildCal(y, m) {
@@ -548,7 +552,10 @@
           const day = prevM_daysInM - i;
           const di = document.createElement("div");
           di.className = "cal-day day-muted";
-          di.innerHTML = `<span class="day-num">${day}</span>`;
+          const span = document.createElement("span");
+          span.className = "day-num";
+          span.textContent = day;
+          di.appendChild(span);
           grid.appendChild(di);
         }
 
@@ -569,12 +576,29 @@
             di.classList.add(wCnt === 6 ? "day-w6" : "day-w15");
           }
 
-          di.innerHTML = `<span class="day-num">${day}</span>`;
-          if (work) di.innerHTML += `<span class="badge">W${wCnt}</span>`;
-          if (holidayName) di.innerHTML += `<span class="holiday-name">${holidayName}</span>`;
+          const dayNum = document.createElement("span");
+          dayNum.className = "day-num";
+          dayNum.textContent = day;
+          di.appendChild(dayNum);
+
+          if (work) {
+            const badge = document.createElement("span");
+            badge.className = "badge";
+            badge.textContent = `W${wCnt}`;
+            di.appendChild(badge);
+          }
+          if (holidayName) {
+            const hSpan = document.createElement("span");
+            hSpan.className = "holiday-name";
+            hSpan.textContent = holidayName;
+            di.appendChild(hSpan);
+          }
           if (notes[str]) {
             const shortNote = notes[str].length > 5 ? notes[str].substring(0, 5) + "..." : notes[str];
-            di.innerHTML += `<div class="day-note">${shortNote}</div>`;
+            const noteDiv = document.createElement("div");
+            noteDiv.className = "day-note";
+            noteDiv.textContent = shortNote;
+            di.appendChild(noteDiv);
             di.title = notes[str];
           }
           di.onclick = () => openModal(str);
@@ -587,7 +611,10 @@
         for (let day = 1; day <= lastRowExtra; day++) {
           const di = document.createElement("div");
           di.className = "cal-day day-muted";
-          di.innerHTML = `<span class="day-num">${day}</span>`;
+          const span = document.createElement("span");
+          span.className = "day-num";
+          span.textContent = day;
+          di.appendChild(span);
           grid.appendChild(di);
         }
       }
