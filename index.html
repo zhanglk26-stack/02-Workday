@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>2026 工作日看板 - Contrast</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="workday.js"></script>
     <style>
       :root {
         --bg-color: #f0f2f5;
@@ -208,6 +209,7 @@
         display: flex; flex-direction: column; align-items: center;
         color: var(--text-sec); text-decoration: none; font-size: 10px;
         flex: 1;
+
       }
       .nav-item.active { color: var(--primary); }
       .nav-item i { font-size: 22px; margin-bottom: 1px; }
@@ -330,33 +332,11 @@
     </div>
 
     <script>
-      const DATA = {
-        h: {
-          "2026-01-01": "元旦", "2026-01-02": "元旦", "2026-01-03": "元旦",
-          "2026-02-15": "春节", "2026-02-16": "春节", "2026-02-17": "春节", "2026-02-18": "春节", "2026-02-19": "春节", "2026-02-20": "春节", "2026-02-21": "春节", "2026-02-22": "春节", "2026-02-23": "春节",
-          "2026-04-04": "清明", "2026-04-05": "清明", "2026-04-06": "清明",
-          "2026-05-01": "五一", "2026-05-02": "五一", "2026-05-03": "五一", "2026-05-04": "五一", "2026-05-05": "五一",
-          "2026-06-19": "端午", "2026-06-20": "端午", "2026-06-21": "端午",
-          "2026-09-25": "中秋", "2026-09-26": "中秋", "2026-09-27": "中秋",
-          "2026-10-01": "国庆", "2026-10-02": "国庆", "2026-10-03": "国庆", "2026-10-04": "国庆", "2026-10-05": "国庆", "2026-10-06": "国庆", "2026-10-07": "国庆",
-        },
-        w: new Set(["2026-01-04", "2026-02-14", "2026-02-28", "2026-04-26", "2026-05-10", "2026-09-20", "2026-09-28", "2026-10-10"]),
-      };
-
       const sysT = new Date();
       const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 0, 5);
       let viewM = t.getMonth();
       let notes = JSON.parse(localStorage.getItem('workday_notes') || '{}');
       let selectedDate = null;
-
-      const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      const isWork = (date) => {
-        const s = fmt(date);
-        if (DATA.w.has(s)) return true;
-        if (DATA.h[s]) return false;
-        const d = date.getDay();
-        return d > 0 && d < 6;
-      };
 
       function calc() {
         let yp = 0, yt = 0, mp = 0, mt = 0, hp = 0, hr = 0;
@@ -370,14 +350,7 @@
         const yPct = ((yp / yt) * 100).toFixed(1);
         const mPct = ((mp / mt) * 100).toFixed(1);
         document.getElementById("m-prog-txt").innerText = mPct + "%";
-        document.getElementById("m-prog-bar").style.width = mPct + "%";
-        document.getElementById("m-summary").innerText = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
-        document.getElementById("y-prog-txt").innerText = yPct + "%";
-        document.getElementById("y-prog-bar").style.width = yPct + "%";
-        const dayOfYear = Math.floor((t - new Date(2026,0,1)) / 86400000) + 1;
-        document.getElementById("y-summary").innerText = `2026年已过去 ${dayOfYear} 天`;
-        document.getElementById("h-pass").innerText = hp;
-        document.getElementById("h-rem").innerText = hr;
+
       }
 
       function buildCal(y, m) {
@@ -396,8 +369,7 @@
 
         for (let i = firstD - 1; i >= 0; i--) {
           const day = prevM_daysInM - i;
-          const di = document.createElement("div"); di.className = "cal-day day-muted";
-          di.innerHTML = `<span>${day}</span>`; grid.appendChild(di);
+
         }
 
         let wCnt = 0;
@@ -408,21 +380,12 @@
           if (str === todayStr) di.classList.add("day-today");
           if (holidayName) di.classList.add("day-holiday");
           else if (!work) di.classList.add("day-rest");
-          if (work && (wCnt === 6 || wCnt === 15)) di.classList.add("milestone");
-
-          di.innerHTML = `<span>${day}</span>`;
-          if (work) di.innerHTML += `<span class="badge">W${wCnt}</span>`;
-          if (holidayName) di.innerHTML += `<span class="holiday-name">${holidayName}</span>`;
-          if (notes[str]) di.innerHTML += `<div class="note-dot"></div>`;
 
           di.onclick = () => openModal(str);
           grid.appendChild(di);
         }
 
-        const next = (7 - ((firstD + daysInM) % 7)) % 7;
-        for (let day = 1; day <= next; day++) {
-          const di = document.createElement("div"); di.className = "cal-day day-muted";
-          di.innerHTML = `<span>${day}</span>`; grid.appendChild(di);
+
         }
       }
 
