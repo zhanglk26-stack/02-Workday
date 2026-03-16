@@ -343,14 +343,34 @@
         const s = new Date(2026, 0, 1), e = new Date(2026, 11, 31);
         for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
           const w = isWork(d);
-          if (w) { yt++; if (d <= t) yp++; if (d.getMonth() === t.getMonth()) { mt++; if (d <= t) mp++; } }
+          if (w) {
+            yt++;
+            if (d <= t) yp++;
+            if (d.getMonth() === t.getMonth()) {
+              mt++;
+              if (d <= t) mp++;
+            }
+          }
           const strD = fmt(d);
-          if (DATA.h[strD] && d.getDay() !== 0 && d.getDay() !== 6) { if (d <= t) hp++; else hr++; }
+          if (DATA.h[strD] && d.getDay() !== 0 && d.getDay() !== 6) {
+            if (d <= t) hp++;
+            else hr++;
+          }
         }
         const yPct = ((yp / yt) * 100).toFixed(1);
         const mPct = ((mp / mt) * 100).toFixed(1);
-        document.getElementById("m-prog-txt").innerText = mPct + "%";
 
+        document.getElementById("m-prog-txt").innerText = mPct + "%";
+        document.getElementById("m-prog-bar").style.width = mPct + "%";
+        document.getElementById("m-summary").innerText = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
+
+        document.getElementById("y-prog-txt").innerText = yPct + "%";
+        document.getElementById("y-prog-bar").style.width = yPct + "%";
+        const yDaysPast = Math.floor((t - (new Date(2026, 0, 1))) / 86400000) + 1;
+        document.getElementById("y-summary").innerText = `2026年已过去 ${yDaysPast} 天`;
+
+        document.getElementById("h-pass").innerText = hp;
+        document.getElementById("h-rem").innerText = hr;
       }
 
       function buildCal(y, m) {
@@ -369,7 +389,13 @@
 
         for (let i = firstD - 1; i >= 0; i--) {
           const day = prevM_daysInM - i;
-
+          const di = document.createElement("div");
+          di.className = "cal-day day-muted";
+          const span = document.createElement("span");
+          span.className = "day-num";
+          span.innerText = day;
+          di.appendChild(span);
+          grid.appendChild(di);
         }
 
         let wCnt = 0;
@@ -381,11 +407,45 @@
           if (holidayName) di.classList.add("day-holiday");
           else if (!work) di.classList.add("day-rest");
 
+          const num = document.createElement("span");
+          num.className = "day-num";
+          num.innerText = day;
+          di.appendChild(num);
+
+          if (work) {
+            const badge = document.createElement("span");
+            badge.className = "badge";
+            badge.innerText = `W${wCnt}`;
+            di.appendChild(badge);
+          }
+
+          if (holidayName) {
+            const hName = document.createElement("span");
+            hName.className = "holiday-name";
+            hName.innerText = holidayName;
+            di.appendChild(hName);
+          }
+
+          if (notes[str]) {
+            const dot = document.createElement("div");
+            dot.className = "note-dot";
+            di.appendChild(dot);
+          }
+
           di.onclick = () => openModal(str);
           grid.appendChild(di);
         }
 
-
+        const totalCells = firstD + daysInM;
+        const lastRowExtra = (7 - (totalCells % 7)) % 7;
+        for (let day = 1; day <= lastRowExtra; day++) {
+          const di = document.createElement("div");
+          di.className = "cal-day day-muted";
+          const span = document.createElement("span");
+          span.className = "day-num";
+          span.innerText = day;
+          di.appendChild(span);
+          grid.appendChild(di);
         }
       }
 
