@@ -1,474 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    />
-    <title>2026 工作日看板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>2026 工作日看板 - Contrast</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
       :root {
-        --bg-color: #f8f9ff;
-        --card-bg: rgba(255, 255, 255, 0.7);
-        --text-main: #1d1d1f;
-        --text-sec: #86868b;
-        --blue: #0071e3;
-        --blue-grad: linear-gradient(135deg, #0071e3, #40a9ff);
-        --red: #ff3b30;
-        --green: #34c759;
-        --border: rgba(0, 0, 0, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.4);
-        --shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-        --dot-color: #0071e3;
-        
-        /* Standardized Typography Tokens - Increased for Elderly Friendliness */
-        --fs-sm: 16px;
-        --fs-md: 20px;
-        --fs-lg: 32px;
-        --fw-reg: 400;
-        --fw-bold: 700;
+        --bg-color: #f0f2f5;
+        --card-bg: #ffffff;
+        --text-main: #1a1a1a;
+        --text-sec: #666666;
+        --primary: #0066ff;
+        --primary-light: rgba(0, 102, 255, 0.1);
+        --success: #28a745;
+        --danger: #dc3545;
+        --warning: #ffc107;
+        --border: #e1e4e8;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 16px;
       }
 
       [data-theme="dark"] {
-        --bg-color: #000000;
-        --card-bg: rgba(28, 28, 30, 0.7);
-        --text-main: #f5f5f7;
-        --text-sec: #8e8e93;
-        --blue: #0a84ff;
-        --blue-grad: linear-gradient(135deg, #0a84ff, #5ac8fa);
-        --red: #ff453a;
-        --green: #32d74b;
-        --border: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        --dot-color: #0a84ff;
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --text-main: #e0e0e0;
+        --text-sec: #a0a0a0;
+        --primary: #3391ff;
+        --primary-light: rgba(51, 145, 255, 0.15);
+        --border: #333333;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
 
-      * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
       body {
-        font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+        font-family: "PingFang SC", -apple-system, sans-serif;
         background-color: var(--bg-color);
-        background-image: radial-gradient(circle at top right, var(--blue), transparent 400px);
-        background-attachment: fixed;
         color: var(--text-main);
-        font-size: var(--fs-md);
-        font-weight: var(--fw-reg);
-        margin: 0;
-        padding: 16px;
-        display: flex;
-        justify-content: center;
-        min-height: 100vh;
-        overflow-x: hidden;
-        transition: background-color 0.5s ease;
+        line-height: 1.5;
+        transition: background-color 0.3s;
+        padding-bottom: 80px;
       }
 
-      .app-container {
-        width: 100%;
-        max-width: none; /* Full width as requested */
-        display: flex;
-        flex-direction: column;
-        gap: 8px; /* Reduced from 24px */
-        z-index: 10;
-        padding-bottom: 32px;
-        margin: 0;
+      .app-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px;
       }
 
-      .content-wrapper {
+      @media (min-width: 600px) {
+        .app-wrapper { padding: 20px; }
+      }
+
+      header {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .brand { display: flex; align-items: center; gap: 8px; }
+      .brand i { font-size: 28px; color: var(--primary); }
+      .brand h1 { font-size: 18px; font-weight: 600; }
+
+      .theme-toggle {
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 1px solid var(--border); background: var(--card-bg);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; color: var(--text-main); font-size: 20px;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 16px;
-        width: 100%;
       }
 
-      .stats-col {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+      @media (min-width: 900px) {
+        .dashboard-grid {
+          grid-template-columns: 1.6fr 1fr;
+          gap: 24px;
+        }
       }
 
       .card {
-        background-color: var(--card-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 20px;
-        padding: 18px;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow);
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, background-color 0.3s;
-      }
-
-      .card:hover {
-        transform: translateY(-2px);
-      }
-
-      .card:active {
-        transform: scale(0.98);
-      }
-
-      .header {
-        display: flex;
-        flex-direction: column; /* Stacks on mobile by default */
-        align-items: center;
-        margin-bottom: 8px; /* Reduced from 24px */
-        padding: 0 8px;
-        gap: 16px;
-        position: relative;
-        text-align: center;
-      }
-      @media (min-width: 800px) {
-        .header {
-          flex-direction: row; /* Single line on desktop */
-          justify-content: space-between;
-        }
-      }
-      .header h1 {
-        font-size: 24px;
-        font-weight: var(--fw-bold);
-        margin: 0;
-        letter-spacing: -0.5px;
-        white-space: nowrap;
-      }
-      .header .subtitle {
-        font-size: 20px;
-        color: var(--text-main);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        font-weight: var(--fw-bold);
-      }
-
-      .theme-toggle {
         background: var(--card-bg);
-        border: 1px solid var(--glass-border);
-        color: var(--text-main);
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        border-radius: var(--radius);
+        padding: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        height: fit-content;
+      }
+
+      @media (min-width: 600px) {
+        .card { padding: 24px; }
+      }
+
+      .section-title {
         display: flex;
         align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        backdrop-filter: blur(10px);
-        font-size: 24px;
-        flex-shrink: 0;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
       }
+      .section-title i { color: var(--primary); }
 
-      .status-badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: var(--fs-sm);
-        font-weight: var(--fw-bold);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-      .status-work { background: var(--blue-grad); color: white; }
-      .status-rest { background: linear-gradient(135deg, #34c759, #a3e635); color: white; }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-      .list-title {
-        font-size: var(--fs-sm);
-        color: var(--text-sec);
-        margin-bottom: 12px;
-        font-weight: var(--fw-bold);
-        display: flex;
-        justify-content: space-between;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .list-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        padding: 6px 0;
-        font-size: var(--fs-md);
-      }
-      .val {
-        font-variant-numeric: tabular-nums;
-        font-weight: var(--fw-bold);
-        font-size: var(--fs-md);
-      }
-
-      .progress-section {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .progress-group { width: 100%; }
-      .progress-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--fs-sm);
-        color: var(--text-sec);
-        margin-bottom: 6px;
-        font-weight: var(--fw-bold);
-      }
-      .progress-track {
-        height: 6px;
-        background-color: rgba(128, 128, 128, 0.1);
-        border-radius: 3px;
-        overflow: hidden;
-      }
-      .progress-fill {
-        height: 100%;
-        background: var(--blue-grad);
-        width: 0%;
-        border-radius: 3px;
-        transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
-      }
-
-      .calendar-section { padding: 16px; }
-      .cal-controls {
+      /* Calendar Styles */
+      .cal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 16px;
       }
-      .cal-controls button {
-        background: rgba(128, 128, 128, 0.1);
-        border: none;
-        color: var(--blue);
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 24px;
+      .cal-nav { display: flex; gap: 8px; }
+      .cal-nav button {
+        background: var(--bg-color); border: none; width: 32px; height: 32px;
+        border-radius: 50%; cursor: pointer; color: var(--primary); font-size: 16px;
+        display: flex; align-items: center; justify-content: center;
       }
-      .cal-controls button:hover { background: rgba(128, 128, 128, 0.2); }
-      .cal-controls span { font-size: 24px; font-weight: var(--fw-bold); }
+      #cal-lbl-text { font-size: 18px; font-weight: 600; }
 
-      .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-      .cal-lbl { text-align: center; font-size: var(--fs-sm); color: var(--text-sec); font-weight: var(--fw-bold); padding-bottom: 8px; }
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+      }
+      @media (min-width: 600px) {
+        .cal-grid { gap: 8px; }
+      }
+
+      .cal-lbl { text-align: center; color: var(--text-sec); font-size: 12px; padding-bottom: 8px; }
 
       .cal-day {
-        aspect-ratio: 1;
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        font-size: 24px; /* Increased as requested */
-        background: rgba(128, 128, 128, 0.05);
-        cursor: pointer;
-        transition: all 0.2s;
+        aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; position: relative;
+        background: var(--bg-color); cursor: pointer; transition: 0.2s;
+        font-size: 14px;
       }
-      .cal-day:hover { transform: scale(1.1); z-index: 2; background: rgba(128, 128, 128, 0.15); }
-      .cal-day.empty { background: none; cursor: default; }
-      .cal-day.empty:hover { transform: none; }
-
-      .day-holiday, .day-rest { color: var(--red); background-color: rgba(255, 59, 48, 0.1); }
-      .day-work { color: var(--text-main); font-weight: var(--fw-reg); }
-      .day-muted { color: var(--text-sec); opacity: 0.3; cursor: default; }
-      .day-muted:hover { transform: none; background: rgba(128, 128, 128, 0.05); }
-      .day-today {
-        background: var(--blue-grad) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-        transform: scale(1.1);
-        z-index: 3;
+      @media (min-width: 600px) {
+        .cal-day { border-radius: 12px; font-size: 16px; }
       }
 
-      .badge { font-size: 16px; font-weight: var(--fw-bold); margin-top: 4px; opacity: 0.8; }
-      .holiday-name { position: absolute; top: 4px; right: 6px; font-size: 12px; font-weight: var(--fw-bold); }
+      .cal-day:hover { background: var(--primary-light); }
+      .day-today { background: var(--primary) !important; color: white !important; font-weight: bold; }
+      .day-rest, .day-holiday { color: var(--danger); }
+      .day-muted { opacity: 0.25; cursor: default; }
+
+      .milestone { border: 2px solid var(--primary) !important; }
+      .badge { font-size: 9px; opacity: 0.8; margin-top: 1px; }
+      @media (min-width: 600px) {
+        .badge { font-size: 10px; margin-top: 2px; }
+      }
+
+      .holiday-name { position: absolute; top: 1px; right: 2px; font-size: 8px; font-weight: bold; }
+      @media (min-width: 600px) {
+        .holiday-name { top: 2px; right: 4px; font-size: 9px; }
+      }
+
+      .note-dot {
+        position: absolute; bottom: 2px; width: 4px; height: 4px;
+        border-radius: 50%; background: var(--primary);
+      }
+
+      /* Stats & Progress */
+      .stats-container { display: flex; flex-direction: column; gap: 16px; }
       
-      /* W6 and W15 Special Highlighting */
-      .day-w6, .day-w15 {
-        border: 3px solid var(--blue) !important;
-        background-color: rgba(0, 113, 227, 0.05);
-      }
-      
-      /* Note Display Styles */
-      .day-note {
-        width: 90%;
-        font-size: 12px;
-        color: var(--blue);
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-top: 2px;
-        font-weight: var(--fw-bold);
-      }
+      .progress-item { margin-bottom: 16px; }
+      .progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+      .progress-bar { height: 8px; background: var(--bg-color); border-radius: 4px; overflow: hidden; }
+      .progress-fill { height: 100%; background: var(--primary); width: 0; transition: width 1s; }
+      .progress-fill.success { background: var(--success); }
 
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+      .summary-text { font-size: 12px; color: var(--text-sec); margin-top: 6px; }
+
+      .counter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
       }
+      .counter-item { display: flex; flex-direction: column; gap: 2px; }
+      .counter-item .label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; }
+      .counter-item .val { font-size: 16px; font-weight: 700; color: var(--text-main); }
 
-      .app-container > * { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
-      .app-container > *:nth-child(2) { animation-delay: 0.1s; }
-      .app-container > *:nth-child(3) { animation-delay: 0.2s; }
+      /* Holiday Tips */
+      .tip-card {
+        border-left: 4px solid var(--primary);
+        padding: 10px; background: var(--primary-light);
+        border-radius: 8px; margin-bottom: 12px;
+      }
+      .tip-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+      .tip-desc { font-size: 12px; color: var(--text-sec); line-height: 1.4; }
 
-      /* Modal Styles */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
+      /* Bottom Nav */
+      .bottom-nav {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--card-bg); border-top: 1px solid var(--border);
+        display: flex; justify-content: space-around; padding: 10px 0;
         z-index: 100;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+      }
+      .nav-item {
+        display: flex; flex-direction: column; align-items: center;
+        color: var(--text-sec); text-decoration: none; font-size: 10px;
+        flex: 1;
+      }
+      .nav-item.active { color: var(--primary); }
+      .nav-item i { font-size: 22px; margin-bottom: 1px; }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        display: none; align-items: center; justify-content: center; z-index: 1000;
         padding: 20px;
       }
       .modal-card {
-        background: var(--bg-color);
-        width: 100%;
-        max-width: 320px;
-        border-radius: 24px;
-        padding: 24px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        animation: slideUp 0.3s ease-out;
+        background: var(--card-bg); padding: 20px; border-radius: var(--radius);
+        width: 100%; max-width: 360px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       }
-      .modal-header { font-weight: var(--fw-bold); font-size: var(--fs-md); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-      .modal-body textarea {
-        width: 100%;
-        height: 120px;
-        background: rgba(128,128,128,0.1);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 12px;
-        color: var(--text-main);
-        font-family: inherit;
-        font-size: var(--fs-md);
-        resize: none;
-        outline: none;
+      .modal-card h2 { font-size: 18px; margin-bottom: 12px; }
+      .modal-card textarea {
+        width: 100%; height: 120px; padding: 12px; border: 1px solid var(--border);
+        border-radius: 8px; margin-bottom: 16px; background: var(--bg-color); color: var(--text-main);
+        font-family: inherit; font-size: 14px; outline: none; resize: none;
       }
-      .modal-footer { display: flex; gap: 12px; margin-top: 16px; }
-      .modal-footer button {
-        flex: 1;
-        padding: 12px;
-        border-radius: 12px;
-        border: none;
-        font-weight: var(--fw-bold);
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .btn-cancel { background: rgba(128,128,128,0.1); color: var(--text-main); }
-      .btn-save { background: var(--blue-grad); color: white; }
-
-      @media (min-width: 800px) {
-        body { align-items: flex-start; }
-        .app-container { max-width: none; }
-        .content-wrapper { flex-direction: row; align-items: flex-start; }
-        .calendar-col { flex: 1.6; display: flex; flex-direction: column; gap: 16px; }
-        .stats-col { flex: 1; order: 1; } /* Stats and progress on the right */
-        .cal-day { font-size: var(--fs-md); }
-      }
+      .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+      .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 14px; }
+      .btn-primary { background: var(--primary); color: white; }
+      .btn-ghost { background: transparent; color: var(--text-sec); }
     </style>
   </head>
   <body>
-    <div class="app-container">
-      <div class="header">
-        <h1>2026 工作日看板</h1>
-        <p class="subtitle" id="date-subtitle"></p>
-        <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
-          <i class="ph ph-sun" id="theme-icon"></i>
+    <div class="app-wrapper">
+      <header>
+        <div class="brand">
+          <i class="ph-fill ph-calendar-check"></i>
+          <h1>2026 工作日看板</h1>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <i id="theme-icon" class="ph ph-sun"></i>
         </button>
+      </header>
+
+      <div class="dashboard-grid">
+        <section class="card">
+          <div class="cal-header">
+            <span id="cal-lbl-text">2026年 1月</span>
+            <div class="cal-nav">
+              <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
+              <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </section>
+
+        <div class="stats-container">
+          <section class="card">
+            <div class="section-title"><i class="ph-fill ph-chart-line-up"></i> 工作进度</div>
+
+            <div class="progress-item">
+              <div class="progress-label">
+                <span>本月进度</span>
+                <span id="m-prog-txt">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div id="m-prog-bar" class="progress-fill"></div>
+              </div>
+              <div class="summary-text" id="m-summary">已工作 0 天，剩余 0 天</div>
+            </div>
+
+            <div class="progress-item">
+              <div class="progress-label">
+                <span>年度完成</span>
+                <span id="y-prog-txt" style="color: var(--success)">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div id="y-prog-bar" class="progress-fill success"></div>
+              </div>
+              <div class="summary-text" id="y-summary">2026年已过去 0 天</div>
+            </div>
+
+            <div class="counter-grid">
+              <div class="counter-item">
+                <span class="label">假期已过</span>
+                <span class="val" id="h-pass">0</span>
+              </div>
+              <div class="counter-item">
+                <span class="label">假期余额</span>
+                <span class="val" style="color: var(--success)" id="h-rem">0</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="section-title"><i class="ph-fill ph-confetti"></i> 拼假建议 (Holiday Tips)</div>
+            <div class="tip-card">
+              <div class="tip-title">春节：请4休15</div>
+              <div class="tip-desc">在2月15日前后请假，即可获得 15 天超级长假。</div>
+            </div>
+            <div class="tip-card" style="border-left-color: var(--warning)">
+              <div class="tip-title">国庆：请3休13</div>
+              <div class="tip-desc">10月黄金周攻略：请 3 天休 13 天，提前规划行程。</div>
+            </div>
+          </section>
+        </div>
       </div>
-
-      <div class="content-wrapper">
-        <div class="calendar-col">
-          <div class="card calendar-section">
-            <div class="cal-controls">
-              <button onclick="changeMonth(-1)"><i class="ph-bold ph-caret-left"></i></button>
-              <span id="cal-lbl" style="display: flex; align-items: center; gap: 6px">
-                <i class="ph-bold ph-calendar-blank"></i> <span id="cal-lbl-text">2026年 --月</span>
-              </span>
-              <button onclick="changeMonth(1)"><i class="ph-bold ph-caret-right"></i></button>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-          </div>
-        </div>
-
-        <div class="stats-col">
-          <div class="card progress-section">
-            <div class="progress-group">
-              <div class="progress-header">
-                <span><i class="ph ph-chart-line-up"></i> 月度搬砖进度</span><span id="m-prog-txt">0%</span>
-              </div>
-              <div class="progress-track"><div class="progress-fill" id="m-prog-bar"></div></div>
-            </div>
-            <div class="progress-group">
-              <div class="progress-header">
-                <span><i class="ph ph-map-trifold"></i> 年度搬砖进程</span><span id="y-prog-txt">0%</span>
-              </div>
-              <div class="progress-track"><div class="progress-fill" id="y-prog-bar"></div></div>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="card">
-              <div class="list-title">
-                <span style="display: flex; align-items: center; gap: 4px">
-                  <i class="ph ph-calendar-blank"></i> <span id="month-title">--月</span>
-                </span>
-                <span>Month</span>
-              </div>
-              <div class="list-item"><span>已完成</span><span class="val" style="color: var(--blue)" id="m-pass">0</span></div>
-              <div class="list-item"><span>待搬砖</span><span class="val" id="m-rem">0</span></div>
-            </div>
-            <div class="card">
-              <div class="list-title">
-                <span style="display: flex; align-items: center; gap: 4px"><i class="ph ph-clock"></i> <span>2026 全年</span></span>
-                <span>Year</span>
-              </div>
-              <div class="list-item"><span>已完成</span><span class="val" style="color: var(--blue)" id="y-pass">0</span></div>
-              <div class="list-item"><span>待搬砖</span><span class="val" id="y-rem">0</span></div>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="card">
-              <div class="list-title">
-                <span style="display: flex; align-items: center; gap: 4px"><i class="ph ph-coffee"></i> <span>假期余额</span></span>
-                <span>Holiday</span>
-              </div>
-              <div class="list-item"><span>已过</span><span class="val" style="color: var(--text-sec)" id="h-pass">0</span></div>
-              <div class="list-item"><span>待休</span><span class="val" style="color: var(--green)" id="h-rem">0</span></div>
-            </div>
-            <div class="card">
-              <div class="list-title">
-                <span style="display: flex; align-items: center; gap: 4px"><i class="ph ph-lightbulb"></i> <span>拼假攻略</span></span>
-                <span>Tips</span>
-              </div>
-              <div style="font-size: 11px; line-height: 1.6; color: var(--text-main);">
-                <div style="margin-bottom: 2px"><b>春节：</b>请4休15</div>
-                <div style="margin-bottom: 2px"><b>五一：</b>请4休9</div>
-                <div><b>国庆：</b>请3休13</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> <!-- End content-wrapper -->
     </div>
 
-    <!-- Note Modal -->
+    <nav class="bottom-nav">
+      <a href="#" class="nav-item active"><i class="ph-fill ph-squares-four"></i><span>看板</span></a>
+      <a href="#" class="nav-item"><i class="ph ph-chart-pie"></i><span>统计</span></a>
+      <a href="#" class="nav-item"><i class="ph ph-gear"></i><span>设置</span></a>
+    </nav>
+
     <div class="modal-overlay" id="note-modal">
       <div class="modal-card">
-        <div class="modal-header" id="modal-date-title">备注日程</div>
-        <div class="modal-body">
-          <textarea id="note-input" placeholder="写点什么..."></textarea>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="closeModal()">取消</button>
-          <button class="btn-save" onclick="saveNote()">保存</button>
+        <h2 id="modal-date-title">日程备注</h2>
+        <textarea id="note-input" placeholder="写点什么..."></textarea>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" onclick="saveNote()">保存</button>
         </div>
       </div>
     </div>
@@ -488,10 +344,10 @@
       };
 
       const sysT = new Date();
-      const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 2, 13);
+      const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 0, 5);
       let viewM = t.getMonth();
-      let selectedDate = null;
       let notes = JSON.parse(localStorage.getItem('workday_notes') || '{}');
+      let selectedDate = null;
 
       const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
       const isWork = (date) => {
@@ -511,29 +367,24 @@
           const strD = fmt(d);
           if (DATA.h[strD] && d.getDay() !== 0 && d.getDay() !== 6) { if (d <= t) hp++; else hr++; }
         }
-        document.getElementById("y-pass").innerText = yp;
-        document.getElementById("y-rem").innerText = yt - yp;
-        document.getElementById("m-pass").innerText = mp;
-        document.getElementById("m-rem").innerText = mt - mp;
-        document.getElementById("h-pass").innerText = hp;
-        document.getElementById("h-rem").innerText = hr;
-        document.getElementById("month-title").innerText = `${t.getMonth() + 1}月`;
         const yPct = ((yp / yt) * 100).toFixed(1);
         const mPct = ((mp / mt) * 100).toFixed(1);
-        document.getElementById("y-prog-txt").innerText = yPct + "%";
         document.getElementById("m-prog-txt").innerText = mPct + "%";
-        setTimeout(() => {
-          document.getElementById("y-prog-bar").style.width = yPct + "%";
-          document.getElementById("m-prog-bar").style.width = mPct + "%";
-        }, 300);
-        const tag = isWork(t) ? `<span class="status-badge status-work">搬砖中</span>` : `<span class="status-badge status-rest">回血中</span>`;
-        document.getElementById("date-subtitle").innerHTML = `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日 星期${["日", "一", "二", "三", "四", "五", "六"][t.getDay()]} ${tag}`;
+        document.getElementById("m-prog-bar").style.width = mPct + "%";
+        document.getElementById("m-summary").innerText = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
+        document.getElementById("y-prog-txt").innerText = yPct + "%";
+        document.getElementById("y-prog-bar").style.width = yPct + "%";
+        const dayOfYear = Math.floor((t - new Date(2026,0,1)) / 86400000) + 1;
+        document.getElementById("y-summary").innerText = `2026年已过去 ${dayOfYear} 天`;
+        document.getElementById("h-pass").innerText = hp;
+        document.getElementById("h-rem").innerText = hr;
       }
 
       function buildCal(y, m) {
         const grid = document.getElementById("cal-grid");
         grid.innerHTML = "";
         document.getElementById("cal-lbl-text").innerText = `${y}年 ${m + 1}月`;
+
         ["日", "一", "二", "三", "四", "五", "六"].forEach(txt => {
           const di = document.createElement("div"); di.className = "cal-lbl"; di.innerText = txt; grid.appendChild(di);
         });
@@ -543,52 +394,35 @@
         const prevM_daysInM = new Date(y, m, 0).getDate();
         const todayStr = fmt(t);
 
-        // Render previous month's trailing days
         for (let i = firstD - 1; i >= 0; i--) {
           const day = prevM_daysInM - i;
-          const di = document.createElement("div");
-          di.className = "cal-day day-muted";
-          di.innerHTML = `<span class="day-num">${day}</span>`;
-          grid.appendChild(di);
+          const di = document.createElement("div"); di.className = "cal-day day-muted";
+          di.innerHTML = `<span>${day}</span>`; grid.appendChild(di);
         }
 
-        // Render current month's days
         let wCnt = 0;
         for (let day = 1; day <= daysInM; day++) {
           const date = new Date(y, m, day), str = fmt(date), work = isWork(date), holidayName = DATA.h[str];
           if (work) wCnt++;
-          const di = document.createElement("div");
-          di.className = "cal-day";
+          const di = document.createElement("div"); di.className = "cal-day";
           if (str === todayStr) di.classList.add("day-today");
-          else if (holidayName) di.classList.add("day-holiday");
+          if (holidayName) di.classList.add("day-holiday");
           else if (!work) di.classList.add("day-rest");
-          else di.classList.add("day-work");
-          
-          // Highlight W6 and W15
-          if (work && (wCnt === 6 || wCnt === 15)) {
-            di.classList.add(wCnt === 6 ? "day-w6" : "day-w15");
-          }
+          if (work && (wCnt === 6 || wCnt === 15)) di.classList.add("milestone");
 
-          di.innerHTML = `<span class="day-num">${day}</span>`;
+          di.innerHTML = `<span>${day}</span>`;
           if (work) di.innerHTML += `<span class="badge">W${wCnt}</span>`;
           if (holidayName) di.innerHTML += `<span class="holiday-name">${holidayName}</span>`;
-          if (notes[str]) {
-            const shortNote = notes[str].length > 5 ? notes[str].substring(0, 5) + "..." : notes[str];
-            di.innerHTML += `<div class="day-note">${shortNote}</div>`;
-            di.title = notes[str];
-          }
+          if (notes[str]) di.innerHTML += `<div class="note-dot"></div>`;
+
           di.onclick = () => openModal(str);
           grid.appendChild(di);
         }
 
-        // Render remaining days in the last week only to complete the row
-        const totalCells = firstD + daysInM;
-        const lastRowExtra = (7 - (totalCells % 7)) % 7;
-        for (let day = 1; day <= lastRowExtra; day++) {
-          const di = document.createElement("div");
-          di.className = "cal-day day-muted";
-          di.innerHTML = `<span class="day-num">${day}</span>`;
-          grid.appendChild(di);
+        const next = (7 - ((firstD + daysInM) % 7)) % 7;
+        for (let day = 1; day <= next; day++) {
+          const di = document.createElement("div"); di.className = "cal-day day-muted";
+          di.innerHTML = `<span>${day}</span>`; grid.appendChild(di);
         }
       }
 
@@ -597,15 +431,14 @@
         document.getElementById("modal-date-title").innerText = `${dateStr} 日程备注`;
         document.getElementById("note-input").value = notes[dateStr] || "";
         document.getElementById("note-modal").style.display = "flex";
-        document.getElementById("note-input").focus();
+        setTimeout(() => document.getElementById("note-input").focus(), 100);
       }
       function closeModal() { document.getElementById("note-modal").style.display = "none"; }
       function saveNote() {
         const val = document.getElementById("note-input").value.trim();
         if (val) notes[selectedDate] = val; else delete notes[selectedDate];
         localStorage.setItem('workday_notes', JSON.stringify(notes));
-        buildCal(2026, viewM);
-        closeModal();
+        buildCal(2026, viewM); closeModal();
       }
 
       function toggleTheme() {
@@ -628,13 +461,13 @@
         buildCal(2026, viewM);
       }
 
-      // Init
+      // Initial Theme
       if (localStorage.getItem('theme') === 'dark') {
         document.body.setAttribute("data-theme", "dark");
         document.getElementById("theme-icon").className = "ph ph-moon";
       }
-      calc();
-      buildCal(2026, viewM);
+
+      calc(); buildCal(2026, viewM);
     </script>
   </body>
 </html>
