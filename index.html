@@ -493,6 +493,7 @@
       let selectedDate = null;
       let notes = JSON.parse(localStorage.getItem('workday_notes') || '{}');
 
+      const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
       const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
       const isWork = (date) => {
         const s = fmt(date);
@@ -511,17 +512,16 @@
           const strD = fmt(d);
           if (DATA.h[strD] && d.getDay() !== 0 && d.getDay() !== 6) { if (d <= t) hp++; else hr++; }
         }
-        document.getElementById("y-pass").innerText = yp;
-        document.getElementById("y-rem").innerText = yt - yp;
-        document.getElementById("m-pass").innerText = mp;
-        document.getElementById("m-rem").innerText = mt - mp;
-        document.getElementById("h-pass").innerText = hp;
-        document.getElementById("h-rem").innerText = hr;
-        document.getElementById("month-title").innerText = `${t.getMonth() + 1}月`;
         const yPct = ((yp / yt) * 100).toFixed(1);
         const mPct = ((mp / mt) * 100).toFixed(1);
-        document.getElementById("y-prog-txt").innerText = yPct + "%";
-        document.getElementById("m-prog-txt").innerText = mPct + "%";
+        const updates = {
+          "y-pass": yp, "y-rem": yt - yp,
+          "m-pass": mp, "m-rem": mt - mp,
+          "h-pass": hp, "h-rem": hr,
+          "month-title": `${t.getMonth() + 1}月`,
+          "y-prog-txt": yPct + "%", "m-prog-txt": mPct + "%"
+        };
+        Object.keys(updates).forEach(id => setTxt(id, updates[id]));
         setTimeout(() => {
           document.getElementById("y-prog-bar").style.width = yPct + "%";
           document.getElementById("m-prog-bar").style.width = mPct + "%";
@@ -533,7 +533,7 @@
       function buildCal(y, m) {
         const grid = document.getElementById("cal-grid");
         grid.innerHTML = "";
-        document.getElementById("cal-lbl-text").innerText = `${y}年 ${m + 1}月`;
+        setTxt("cal-lbl-text", `${y}年 ${m + 1}月`);
         ["日", "一", "二", "三", "四", "五", "六"].forEach(txt => {
           const di = document.createElement("div"); di.className = "cal-lbl"; di.innerText = txt; grid.appendChild(di);
         });
@@ -594,7 +594,7 @@
 
       function openModal(dateStr) {
         selectedDate = dateStr;
-        document.getElementById("modal-date-title").innerText = `${dateStr} 日程备注`;
+        setTxt("modal-date-title", `${dateStr} 日程备注`);
         document.getElementById("note-input").value = notes[dateStr] || "";
         document.getElementById("note-modal").style.display = "flex";
         document.getElementById("note-input").focus();
