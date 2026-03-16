@@ -1,13 +1,19 @@
-# Code Review Request
+# Code Review Request - Highlight W6/W15 and Fix Holiday List
+
+## Summary
+Fixed two issues in the 2026 Workday Dashboard (Contrast theme):
+1. **W6/W15 Highlighting**: Added CSS class assignment in `buildCal` to highlight the 6th and 15th workdays of the month.
+2. **Holiday List**: Implemented the missing `updateHolidays` function to display upcoming holiday ranges and calculate the number of workdays remaining until each holiday.
 
 ## Changes
-Restored missing logic in `index.html`'s `<script>` section. Specifically:
-- Refilled `calc()` function to update all progress bars, text summaries, and holiday counters.
-- Refilled `buildCal()` function to correctly render the calendar grid with leading/trailing days, day numbers, work badges (W1, W2...), and holiday names.
-- Fixed syntax errors (unclosed media queries and mismatched braces) in the original `index.html`.
-- Linked `workday.js` in `index.html`.
+- **index.html**:
+  - Modified `buildCal` loop to add `day-w6` and `day-w15` classes based on `wCnt`.
+  - Added `updateHolidays` function.
+  - Updated script initialization and `saveNote` to call `updateHolidays`.
 
-## Verification
-- Unit tests in `tests/workday.test.js` pass.
-- Frontend verification with Playwright confirms the dashboard is correctly rendered with real data (3月 2026).
-- Progress bars and counters are showing non-zero values.
+## Verification Results
+- **Unit Tests**: All 7 tests in `tests/workday.test.js` passed.
+- **Frontend Verification**:
+  - Playwright confirmed presence of `.day-w6` and `.day-w15` elements.
+  - Playwright confirmed `holiday-list` is populated with content.
+  - Visual verification via screenshot `/home/jules/verification/verification.png`.

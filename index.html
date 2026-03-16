@@ -350,6 +350,58 @@
 
       }
 
+      function updateHolidays() {
+        const list = document.getElementById("holiday-list");
+        list.innerHTML = "";
+        const holidays = [];
+        const sortedDates = Object.keys(DATA.h).sort();
+
+        let currentRange = null;
+        for (const dateStr of sortedDates) {
+          const date = new Date(dateStr);
+          const name = DATA.h[dateStr];
+
+          if (currentRange && currentRange.name === name &&
+              (date - currentRange.end) <= 86400000 * 1.5) {
+            currentRange.end = date;
+          } else {
+            currentRange = { name, start: date, end: date };
+            holidays.push(currentRange);
+          }
+        }
+
+        holidays.forEach(h => {
+          if (h.end < t && fmt(h.end) !== fmt(t)) return;
+
+          let workdaysUntil = 0;
+          if (h.start > t) {
+            let d = new Date(t);
+            d.setDate(d.getDate() + 1);
+            while (d < h.start) {
+              if (isWork(d)) workdaysUntil++;
+              d.setDate(d.getDate() + 1);
+            }
+          }
+
+          const card = document.createElement("div");
+          card.className = "tip-card";
+
+          const title = document.createElement("div");
+          title.className = "tip-title";
+          const statusTxt = h.start > t ? `待搬砖: ${workdaysUntil}天` : "进行中";
+          title.innerHTML = `<span>${h.name}</span> <span class="countdown-tag">${statusTxt}</span>`;
+
+          const desc = document.createElement("div");
+          desc.className = "tip-desc";
+          const startStr = (h.start.getMonth() + 1) + "月" + h.start.getDate() + "日";
+          const endStr = (h.end.getMonth() + 1) + "月" + h.end.getDate() + "日";
+          desc.innerText = startStr === endStr ? startStr : `${startStr} 至 ${endStr}`;
+
+          card.appendChild(title);
+          card.appendChild(desc);
+          list.appendChild(card);
+        });
+      }
       function buildCal(y, m) {
         const grid = document.getElementById("cal-grid");
         grid.innerHTML = "";
@@ -380,6 +432,7 @@
           const date = new Date(y, m, day), str = fmt(date), work = isWork(date), holidayName = DATA.h[str];
           if (work) wCnt++;
           const di = document.createElement("div"); di.className = "cal-day";
+          if (work && (wCnt === 6 || wCnt === 15)) di.classList.add(wCnt === 6 ? "day-w6" : "day-w15");
           if (str === todayStr) di.classList.add("day-today");
           if (holidayName) di.classList.add("day-holiday");
           else if (!work) di.classList.add("day-rest");
@@ -438,7 +491,7 @@
         const val = document.getElementById("note-input").value.trim();
         if (val) notes[selectedDate] = val; else delete notes[selectedDate];
         localStorage.setItem('workday_notes', JSON.stringify(notes));
-        buildCal(2026, viewM); closeModal();
+        buildCal(2026, viewM); updateHolidays(); closeModal();
       }
 
       function toggleTheme() {
@@ -467,7 +520,7 @@
         document.getElementById("theme-icon").className = "ph ph-moon";
       }
 
-      calc(); buildCal(2026, viewM);
+      calc(); buildCal(2026, viewM); updateHolidays();
     </script>
   </body>
 </html>
