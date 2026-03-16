@@ -363,6 +363,19 @@
       .btn-cancel { background: rgba(128,128,128,0.1); color: var(--text-main); }
       .btn-save { background: var(--blue-grad); color: white; }
 
+      @media (max-width: 480px) {
+        body { padding: 8px; }
+        .card { padding: 10px; }
+        .calendar-section { padding: 6px; }
+        .cal-grid { gap: 2px; }
+        .cal-day { font-size: 18px; border-radius: 8px; }
+        .badge { font-size: 11px; margin-top: 2px; }
+        .holiday-name { font-size: 9px; right: 2px; top: 1px; }
+        .cal-lbl { font-size: 12px; padding-bottom: 4px; }
+        .cal-controls span { font-size: 18px; }
+        .cal-controls button { width: 36px; height: 36px; font-size: 20px; }
+      }
+
       @media (min-width: 800px) {
         body { align-items: flex-start; }
         .app-container { max-width: none; }
