@@ -348,53 +348,6 @@
         document.getElementById("h-pass").innerText = hp;
         document.getElementById("h-rem").innerText = hr;
 
-        updateHolidays();
-      }
-
-      function updateHolidays() {
-        const list = document.getElementById("holiday-list");
-        list.innerHTML = "";
-
-        const ranges = [];
-        let cur = null;
-        const s = new Date(2026, 0, 1), e = new Date(2026, 11, 31);
-        for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
-          const hName = DATA.h[fmt(d)];
-          if (hName) {
-            if (!cur || cur.name !== hName) {
-              if (cur) ranges.push(cur);
-              cur = { name: hName, start: new Date(d), end: new Date(d) };
-            } else {
-              cur.end = new Date(d);
-            }
-          } else {
-            if (cur) ranges.push(cur);
-            cur = null;
-          }
-        }
-        if (cur) ranges.push(cur);
-
-        const upcoming = ranges.filter(r => r.start > t).slice(0, 3);
-        upcoming.forEach(r => {
-          let wCount = 0;
-          for (let d = new Date(t); d < r.start; d.setDate(d.getDate() + 1)) {
-             if (isWork(d) && fmt(d) !== fmt(t)) wCount++;
-          }
-
-          const div = document.createElement("div");
-          div.className = "tip-card";
-          const startF = `${r.start.getMonth() + 1}月${r.start.getDate()}日`;
-          const endF = `${r.end.getMonth() + 1}月${r.end.getDate()}日`;
-
-          div.innerHTML = `
-            <div class="tip-title">
-              <span>${r.name}</span>
-              <span class="countdown-tag">${wCount}个工作日后</span>
-            </div>
-            <div class="tip-desc">${startF} 至 ${endF}</div>
-          `;
-          list.appendChild(div);
-        });
       }
 
       function buildCal(y, m) {
@@ -430,9 +383,6 @@
           if (str === todayStr) di.classList.add("day-today");
           if (holidayName) di.classList.add("day-holiday");
           else if (!work) di.classList.add("day-rest");
-
-          if (work && wCnt === 6) di.classList.add("day-w6");
-          if (work && wCnt === 15) di.classList.add("day-w15");
 
           const num = document.createElement("span");
           num.className = "day-num";
