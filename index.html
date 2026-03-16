@@ -41,8 +41,8 @@
         color: var(--text-main);
         line-height: 1.5;
         transition: background-color 0.3s;
-        padding-bottom: 80px;
-        font-size: 18px; /* Base font size increased */
+        padding-bottom: 40px;
+        font-size: 18px;
       }
 
       .app-wrapper {
@@ -155,7 +155,6 @@
       .day-w15 { background: #e6f7ff !important; border: 2px solid #40a9ff !important; }
       [data-theme="dark"] .day-w15 { background: #111d2c !important; border-color: #096dd9 !important; }
 
-      .milestone { border: 2px solid var(--primary) !important; }
       .badge { font-size: 12px; opacity: 0.8; margin-top: 2px; font-weight: 600; }
       @media (min-width: 600px) {
         .badge { font-size: 14px; margin-top: 4px; }
@@ -194,31 +193,15 @@
       .counter-item .label { font-size: 14px; color: var(--text-sec); text-transform: uppercase; }
       .counter-item .val { font-size: 22px; font-weight: 700; color: var(--text-main); }
 
-      /* Holiday Tips */
+      /* Holiday Cards */
       .tip-card {
         border-left: 6px solid var(--primary);
         padding: 16px; background: var(--primary-light);
         border-radius: 12px; margin-bottom: 16px;
       }
-      .tip-title { font-weight: 600; font-size: 18px; margin-bottom: 4px; }
+      .tip-title { font-weight: 600; font-size: 18px; margin-bottom: 4px; display: flex; justify-content: space-between; }
       .tip-desc { font-size: 15px; color: var(--text-sec); line-height: 1.5; }
-
-      /* Bottom Nav */
-      .bottom-nav {
-        position: fixed; bottom: 0; left: 0; right: 0;
-        background: var(--card-bg); border-top: 1px solid var(--border);
-        display: flex; justify-content: space-around; padding: 12px 0;
-        z-index: 100;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
-      }
-      .nav-item {
-        display: flex; flex-direction: column; align-items: center;
-        color: var(--text-sec); text-decoration: none; font-size: 12px;
-        flex: 1;
-
-      }
-      .nav-item.active { color: var(--primary); }
-      .nav-item i { font-size: 28px; margin-bottom: 2px; }
+      .countdown-tag { font-size: 14px; color: var(--primary); font-weight: 600; }
 
       /* Modal */
       .modal-overlay {
@@ -306,25 +289,12 @@
           </section>
 
           <section class="card">
-            <div class="section-title"><i class="ph-fill ph-confetti"></i> 拼假建议 (Holiday Tips)</div>
-            <div class="tip-card">
-              <div class="tip-title">春节：请4休15</div>
-              <div class="tip-desc">在2月15日前后请假，即可获得 15 天超级长假。</div>
-            </div>
-            <div class="tip-card" style="border-left-color: var(--warning)">
-              <div class="tip-title">国庆：请3休13</div>
-              <div class="tip-desc">10月黄金周攻略：请 3 天休 13 天，提前规划行程。</div>
-            </div>
+            <div class="section-title"><i class="ph-fill ph-confetti"></i> 未来假期 (Upcoming)</div>
+            <div id="holiday-list"></div>
           </section>
         </div>
       </div>
     </div>
-
-    <nav class="bottom-nav">
-      <a href="#" class="nav-item active"><i class="ph-fill ph-squares-four"></i><span>看板</span></a>
-      <a href="#" class="nav-item"><i class="ph ph-chart-pie"></i><span>统计</span></a>
-      <a href="#" class="nav-item"><i class="ph ph-gear"></i><span>设置</span></a>
-    </nav>
 
     <div class="modal-overlay" id="note-modal">
       <div class="modal-card">
@@ -377,6 +347,54 @@
 
         document.getElementById("h-pass").innerText = hp;
         document.getElementById("h-rem").innerText = hr;
+
+        updateHolidays();
+      }
+
+      function updateHolidays() {
+        const list = document.getElementById("holiday-list");
+        list.innerHTML = "";
+
+        const ranges = [];
+        let cur = null;
+        const s = new Date(2026, 0, 1), e = new Date(2026, 11, 31);
+        for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+          const hName = DATA.h[fmt(d)];
+          if (hName) {
+            if (!cur || cur.name !== hName) {
+              if (cur) ranges.push(cur);
+              cur = { name: hName, start: new Date(d), end: new Date(d) };
+            } else {
+              cur.end = new Date(d);
+            }
+          } else {
+            if (cur) ranges.push(cur);
+            cur = null;
+          }
+        }
+        if (cur) ranges.push(cur);
+
+        const upcoming = ranges.filter(r => r.start > t).slice(0, 3);
+        upcoming.forEach(r => {
+          let wCount = 0;
+          for (let d = new Date(t); d < r.start; d.setDate(d.getDate() + 1)) {
+             if (isWork(d) && fmt(d) !== fmt(t)) wCount++;
+          }
+
+          const div = document.createElement("div");
+          div.className = "tip-card";
+          const startF = `${r.start.getMonth() + 1}月${r.start.getDate()}日`;
+          const endF = `${r.end.getMonth() + 1}月${r.end.getDate()}日`;
+
+          div.innerHTML = `
+            <div class="tip-title">
+              <span>${r.name}</span>
+              <span class="countdown-tag">${wCount}个工作日后</span>
+            </div>
+            <div class="tip-desc">${startF} 至 ${endF}</div>
+          `;
+          list.appendChild(div);
+        });
       }
 
       function buildCal(y, m) {
