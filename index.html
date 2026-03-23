@@ -4,9 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>2026 工作日看板 - Contrast</title>
-      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
     <script src="workday.js"></script>
     <style>
       :root {
@@ -271,48 +269,6 @@
       .btn { padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; font-size: 16px; }
       .btn-primary { background: var(--primary); color: white; }
       .btn-ghost { background: transparent; color: var(--text-sec); }
-
-    </style>
-    <style>
-      .nav-links { display: flex; gap: 16px; margin-left: 24px; }
-      .btn-nav { background: none; border: none; font-size: 18px; color: var(--text-sec); cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: 0.2s; }
-      .btn-nav:hover { background: var(--primary-light); color: var(--primary); }
-      .btn-nav.active { color: var(--primary); font-weight: 600; background: var(--primary-light); }
-
-      #todo-view { display: none; }
-      #dashboard-view { display: block; }
-      .todo-container { display: grid; grid-template-columns: 80px 1fr 300px; gap: 24px; height: calc(100vh - 160px); min-height: 600px; }
-
-      .todo-sidebar { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 24px; }
-      .side-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent; color: var(--text-sec); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-      .side-btn:hover { background: var(--primary-light); color: var(--primary); }
-      .side-btn.active { background: var(--primary); color: white; }
-
-      .todo-main { display: flex; flex-direction: column; gap: 16px; overflow-y: auto; padding-right: 8px; }
-      .todo-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; transition: 0.2s; }
-      .todo-card.today { border: 2px solid var(--primary); }
-      .todo-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-      .todo-date { font-weight: 600; font-size: 18px; }
-      .todo-day-type { font-size: 14px; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
-      .type-work { background: #fff7e6; color: #d48806; }
-      .type-rest { background: #fff1f0; color: #cf1322; }
-      .todo-textarea { width: 100%; border: none; background: var(--bg-color); border-radius: 12px; padding: 12px; font-size: 16px; font-family: inherit; resize: none; min-height: 80px; color: var(--text-main); }
-      .todo-textarea:focus { outline: 1px solid var(--primary); }
-
-      .todo-mini-cal { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; height: fit-content; }
-      .mini-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-      .mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-      .mini-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; border-radius: 6px; cursor: pointer; }
-      .mini-day:hover { background: var(--primary-light); }
-      .mini-day.selected { background: var(--primary); color: white; }
-      .mini-day.today { text-decoration: underline; font-weight: bold; }
-      .mini-day.muted { opacity: 0.3; }
-
-      @media (max-width: 900px) {
-        .todo-container { grid-template-columns: 1fr; height: auto; }
-        .todo-sidebar { flex-direction: row; width: 100%; justify-content: space-around; padding: 12px; order: -1; }
-        .todo-mini-cal { display: none; }
-      }
     </style>
   </head>
   <body>
@@ -323,7 +279,6 @@
           <i class="ph-fill ph-calendar-check"></i>
           <h1>2026 工作日看板</h1>
         </div>
-        <nav class="nav-links"><button class="btn-nav active" onclick="switchView('dashboard')">仪表盘</button><button class="btn-nav" onclick="switchView('todo')">备忘录</button></nav>
         <button class="theme-toggle" onclick="toggleTheme()">
           <i id="theme-icon" class="ph ph-sun"></i>
         </button>
@@ -369,32 +324,6 @@
       </div>
     </div>
 
-      <div id="todo-view">
-        <div class="todo-container">
-          <aside class="todo-sidebar">
-            <button class="side-btn active" onclick="setTodoFilter('today')" title="今日"><i class="ph-fill ph-calendar-star"></i></button>
-            <button class="side-btn" onclick="setTodoFilter('all')" title="全部"><i class="ph-fill ph-list-bullets"></i></button>
-            <button class="side-btn" onclick="setTodoFilter('month')" title="本月"><i class="ph-fill ph-calendar"></i></button>
-          </aside>
-
-          <main class="todo-main" id="todo-list">
-            <!-- Todo cards will be injected here -->
-          </main>
-
-          <aside class="todo-mini-cal">
-            <div class="mini-cal-header">
-              <span id="mini-cal-lbl" style="font-weight:600">2026年1月</span>
-              <div style="display:flex; gap:8px">
-                <i class="ph ph-caret-left" onclick="changeMiniMonth(-1)" style="cursor:pointer"></i>
-                <i class="ph ph-caret-right" onclick="changeMiniMonth(1)" style="cursor:pointer"></i>
-              </div>
-            </div>
-            <div class="mini-cal-grid" id="mini-cal-grid">
-              <!-- Mini cal days here -->
-            </div>
-          </aside>
-        </div>
-      </div>
     <div class="modal-overlay" id="note-modal">
       <div class="modal-card">
         <h2 id="modal-date-title">日程备注</h2>
@@ -590,7 +519,7 @@
         const val = document.getElementById("note-input").value.trim();
         if (val) notes[selectedDate] = val; else delete notes[selectedDate];
         localStorage.setItem('workday_notes', JSON.stringify(notes));
-        buildCal(2026, viewM); updateHolidays(); switchView("dashboard"); closeModal();
+        buildCal(2026, viewM); updateHolidays(); closeModal();
       }
 
       function toggleTheme() {
@@ -619,147 +548,7 @@
         document.querySelectorAll("[id^=theme-icon]").forEach(i => i.className = "ph ph-moon");
       }
 
-
-      let todoFilter = 'all'; // 'today', 'all', 'month'
-      let miniViewM = t.getMonth();
-      let selectedTodoDate = fmt(t);
-
-      function switchView(view) {
-        document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'grid' : 'none';
-        document.getElementById('todo-view').style.display = view === 'todo' ? 'block' : 'none';
-
-        document.querySelectorAll('.btn-nav').forEach(btn => {
-          btn.classList.toggle('active', (view === 'dashboard' && btn.innerText === '仪表盘') || (view === 'todo' && btn.innerText === '备忘录'));
-        });
-
-        if (view === 'todo') {
-          renderTodoList();
-          renderMiniCal(2026, miniViewM);
-        }
-      }
-
-      function setTodoFilter(filter) {
-        todoFilter = filter;
-        document.querySelectorAll('.side-btn').forEach((btn, idx) => {
-          const filters = ['today', 'all', 'month'];
-          btn.classList.toggle('active', filters[idx] === filter);
-        });
-        renderTodoList();
-      }
-
-      function renderTodoList() {
-        const list = document.getElementById('todo-list');
-        list.innerHTML = '';
-
-        let targetDates = [];
-        const todayStr = fmt(t);
-
-        if (todoFilter === 'today') {
-          targetDates = [todayStr];
-        } else {
-          // Show the whole month for 'all' and 'month' but maybe scrolling is better
-          const daysInM = new Date(2026, miniViewM + 1, 0).getDate();
-          for(let d=1; d<=daysInM; d++) {
-            targetDates.push(fmt(new Date(2026, miniViewM, d)));
-          }
-        }
-
-        targetDates.forEach(dateStr => {
-          const date = new Date(dateStr);
-          const isToday = dateStr === todayStr;
-          const work = isWork(date);
-          const hName = DATA.h[dateStr];
-
-          const card = document.createElement('div');
-          card.className = `todo-card ${isToday ? 'today' : ''}`;
-          card.id = `todo-card-${dateStr}`;
-
-          const header = document.createElement('div');
-          header.className = 'todo-card-header';
-
-          const dateTitle = document.createElement('div');
-          dateTitle.className = 'todo-date';
-          dateTitle.innerText = `${dateStr} ${['日','一','二','三','四','五','六'][date.getDay()]}`;
-
-          const typeTag = document.createElement('span');
-          typeTag.className = `todo-day-type ${work ? 'type-work' : 'type-rest'}`;
-          typeTag.innerText = hName || (work ? '工作日' : '休息日');
-
-          header.appendChild(dateTitle);
-          header.appendChild(typeTag);
-
-          const textarea = document.createElement('textarea');
-          textarea.className = 'todo-textarea';
-          textarea.placeholder = '今日备忘...';
-          textarea.value = notes[dateStr] || '';
-          textarea.oninput = (e) => {
-            const val = e.target.value;
-            if (val.trim()) notes[dateStr] = val; else delete notes[dateStr];
-            localStorage.setItem('workday_notes', JSON.stringify(notes));
-            buildCal(2026, viewM);
-            updateHolidays();
-          };
-
-          card.appendChild(header);
-          card.appendChild(textarea);
-          list.appendChild(card);
-        });
-
-        const targetId = todoFilter === 'today' ? `todo-card-${todayStr}` : `todo-card-${selectedTodoDate}`;
-        const scrollTarget = document.getElementById(targetId);
-        if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-
-      function renderMiniCal(y, m) {
-        const grid = document.getElementById('mini-cal-grid');
-        grid.innerHTML = '';
-        document.getElementById('mini-cal-lbl').innerText = `${y}年 ${m + 1}月`;
-
-        ['日', '一', '二', '三', '四', '五', '六'].forEach(txt => {
-          const d = document.createElement('div');
-          d.className = 'mini-day muted';
-          d.style.fontSize = '12px';
-          d.innerText = txt;
-          grid.appendChild(d);
-        });
-
-        const firstD = new Date(y, m, 1).getDay();
-        const daysInM = new Date(y, m + 1, 0).getDate();
-        const todayStr = fmt(t);
-
-        for (let i = 0; i < firstD; i++) {
-          const d = document.createElement('div');
-          d.className = 'mini-day muted';
-          grid.appendChild(d);
-        }
-
-        for (let day = 1; day <= daysInM; day++) {
-          const date = new Date(y, m, day);
-          const str = fmt(date);
-          const di = document.createElement('div');
-          di.className = 'mini-day';
-          if (str === todayStr) di.classList.add('today');
-          if (str === selectedTodoDate) di.classList.add('selected');
-          if (notes[str]) di.style.fontWeight = '900';
-
-          di.innerText = day;
-          di.onclick = () => {
-            selectedTodoDate = str;
-            if (todoFilter === 'today') setTodoFilter('all');
-            renderMiniCal(y, m);
-            renderTodoList();
-          };
-          grid.appendChild(di);
-        }
-      }
-
-      function changeMiniMonth(d) {
-        miniViewM += d;
-        if (miniViewM > 11) miniViewM = 0; else if (miniViewM < 0) miniViewM = 11;
-        renderMiniCal(2026, miniViewM);
-        if (todoFilter !== 'today') renderTodoList();
-      }
-      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
+      calc(); buildCal(2026, viewM); updateHolidays();
     </script>
   </body>
 </html>
