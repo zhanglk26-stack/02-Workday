@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>2026 工作日看板 - Contrast</title>
+      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
     <script src="workday.js"></script>
     <style>
       :root {
@@ -730,6 +732,7 @@
         renderMiniCal(2026, miniViewM);
         if (todoFilter !== 'today') renderTodoList();
       }
+      calc(); buildCal(2026, viewM); updateHolidays(); switchView("dashboard");
     </script>
   </body>
 </html>
