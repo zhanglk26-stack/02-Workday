@@ -79,10 +79,53 @@
         gap: 16px;
       }
 
-      @media (min-width: 900px) {
+      @media (min-width: 1200px) {
+        .app-wrapper {
+          max-width: 1880px;
+          height: 100vh;
+          max-height: 950px;
+          overflow: hidden;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+        }
         .dashboard-grid {
-          grid-template-columns: 1.6fr 1fr;
+          grid-template-columns: 340px 1fr;
           gap: 24px;
+          flex: 1;
+          min-height: 0;
+        }
+        .sidebar {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          overflow-y: auto;
+          padding-right: 8px;
+          height: 100%;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .sidebar header { display: flex !important; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .sidebar header .brand h1 { font-size: 20px; }
+        .sidebar .card { padding: 20px; }
+        .app-wrapper > header { display: none; }
+        .cal-day { font-size: 20px; aspect-ratio: auto; height: 100px; padding: 10px; }
+        .badge { font-size: 13px; }
+        .section-title { font-size: 18px; margin-bottom: 12px; }
+        .tip-card { padding: 12px; }
+        .dashboard-grid > .card { height: 100%; display: flex; flex-direction: column; }
+        .cal-grid { flex: 1; align-content: start; }
+        .progress-item { margin-bottom: 12px; }
+        .counter-grid { margin-top: 12px; padding-top: 12px; }
+      }
+
+      @media (max-width: 1199px) {
+        .sidebar header { display: none; }
+        @media (min-width: 900px) {
+          .dashboard-grid {
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+          }
         }
       }
 
@@ -92,8 +135,10 @@
         padding: 20px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
-        height: fit-content;
+        height: auto;
       }
+
+      @media (max-width: 1199px) { .card { height: fit-content !important; } }
 
       @media (min-width: 600px) {
         .card { padding: 32px; }
@@ -227,8 +272,9 @@
     </style>
   </head>
   <body>
-    <div class="app-wrapper">
+        <div class="app-wrapper">
       <header>
+
         <div class="brand">
           <i class="ph-fill ph-calendar-check"></i>
           <h1>2026 工作日看板</h1>
@@ -236,21 +282,23 @@
         <button class="theme-toggle" onclick="toggleTheme()">
           <i id="theme-icon" class="ph ph-sun"></i>
         </button>
+
       </header>
 
       <div class="dashboard-grid">
-        <section class="card">
-          <div class="cal-header">
-            <span id="cal-lbl-text">2026年 1月</span>
-            <div class="cal-nav">
-              <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
-              <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
-            </div>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
-        </section>
+        <aside class="sidebar">
+          <header>
 
-        <div class="stats-container">
+        <div class="brand">
+          <i class="ph-fill ph-calendar-check"></i>
+          <h1>2026 工作日看板</h1>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <i id="theme-icon-side" class="ph ph-sun"></i>
+        </button>
+
+          </header>
+          <div class="stats-container">
           <section class="card">
             <div class="section-title"><i class="ph-fill ph-chart-line-up"></i> 工作进度</div>
 
@@ -262,37 +310,17 @@
               <div class="progress-bar">
                 <div id="m-prog-bar" class="progress-fill"></div>
               </div>
-              <div class="summary-text" id="m-summary">已工作 0 天，剩余 0 天</div>
+        </aside>
+        <section class="card">
+          <div class="cal-header">
+            <span id="cal-lbl-text">2026年 1月</span>
+            <div class="cal-nav">
+              <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
+              <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
             </div>
-
-            <div class="progress-item">
-              <div class="progress-label">
-                <span>年度完成</span>
-                <span id="y-prog-txt" style="color: var(--success)">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div id="y-prog-bar" class="progress-fill success"></div>
-              </div>
-              <div class="summary-text" id="y-summary">2026年已过去 0 天</div>
-            </div>
-
-            <div class="counter-grid">
-              <div class="counter-item">
-                <span class="label">假期已过</span>
-                <span class="val" id="h-pass">0</span>
-              </div>
-              <div class="counter-item">
-                <span class="label">假期余额</span>
-                <span class="val" style="color: var(--success)" id="h-rem">0</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="section-title"><i class="ph-fill ph-confetti"></i> 未来假期 (Upcoming)</div>
-            <div id="holiday-list"></div>
-          </section>
-        </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </section>
       </div>
     </div>
 
@@ -496,14 +524,14 @@
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
+        const icons = document.querySelectorAll("[id^=theme-icon]");
         if (body.getAttribute("data-theme") === "dark") {
           body.removeAttribute("data-theme");
-          icon.className = "ph ph-sun";
+          icons.forEach(i => i.className = "ph ph-sun");
           localStorage.setItem('theme', 'light');
         } else {
           body.setAttribute("data-theme", "dark");
-          icon.className = "ph ph-moon";
+          icons.forEach(i => i.className = "ph ph-moon");
           localStorage.setItem('theme', 'dark');
         }
       }
@@ -517,7 +545,7 @@
       // Initial Theme
       if (localStorage.getItem('theme') === 'dark') {
         document.body.setAttribute("data-theme", "dark");
-        document.getElementById("theme-icon").className = "ph ph-moon";
+        document.querySelectorAll("[id^=theme-icon]").forEach(i => i.className = "ph ph-moon");
       }
 
       calc(); buildCal(2026, viewM); updateHolidays();
