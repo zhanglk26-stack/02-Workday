@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>2026 工作日看板 - Contrast</title>
+    <title>2026 工作日看板</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="workday.js"></script>
     <style>
@@ -20,6 +20,8 @@
         --border: #e1e4e8;
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         --radius: 16px;
+        --sidebar-w: 200px;
+        --sidebar-icon-w: 60px;
       }
 
       [data-theme="dark"] {
@@ -41,36 +43,131 @@
         color: var(--text-main);
         line-height: 1.5;
         transition: background-color 0.3s;
-        padding-bottom: 40px;
-        font-size: 18px;
+        font-size: 14px;
+        height: 100vh;
+        overflow: hidden;
       }
 
-      .app-wrapper {
+      /* ── App Shell ── */
+      .app-shell {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* ── Sidebar ── */
+      .sidebar {
+        width: var(--sidebar-w);
+        min-width: var(--sidebar-w);
+        background: var(--card-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transition: width 0.25s, min-width 0.25s;
+        overflow: hidden;
+        z-index: 100;
+      }
+
+      .sidebar.collapsed {
+        width: var(--sidebar-icon-w);
+        min-width: var(--sidebar-icon-w);
+      }
+
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 18px 16px 14px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        user-select: none;
+        min-height: 60px;
+      }
+
+      .sidebar-logo i {
+        font-size: 22px;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+
+      .sidebar-logo-text {
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        color: var(--text-main);
+        transition: opacity 0.2s;
+      }
+
+      .sidebar.collapsed .sidebar-logo-text { opacity: 0; width: 0; }
+
+      .sidebar-nav {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 8px;
+        gap: 4px;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--text-sec);
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.15s, color 0.15s;
+        white-space: nowrap;
+        position: relative;
+      }
+
+      .nav-item i {
+        font-size: 20px;
+        flex-shrink: 0;
+        width: 24px;
+        text-align: center;
+      }
+
+      .nav-item-label {
+        overflow: hidden;
+        transition: opacity 0.2s;
+      }
+
+      .sidebar.collapsed .nav-item-label { opacity: 0; width: 0; }
+
+      .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+      .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+
+      .sidebar-bottom {
+        padding: 8px 8px 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      /* ── Main Content ── */
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100vh;
+        position: relative;
+      }
+
+      /* ── Pages ── */
+      .page { display: none; }
+      .page.active { display: block; }
+
+      /* ── Calendar Page ── */
+      .cal-page-wrapper {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 12px;
-      }
-
-      @media (min-width: 600px) {
-        .app-wrapper { padding: 20px; }
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .brand { display: flex; align-items: center; gap: 8px; }
-      .brand i { font-size: 32px; color: var(--primary); }
-      .brand h1 { font-size: 24px; font-weight: 600; }
-
-      .theme-toggle {
-        width: 48px; height: 48px; border-radius: 50%;
-        border: 1px solid var(--border); background: var(--card-bg);
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; color: var(--text-main); font-size: 24px;
+        padding: 20px;
       }
 
       .dashboard-grid {
@@ -95,54 +192,49 @@
         height: fit-content;
       }
 
-      @media (min-width: 600px) {
-        .card { padding: 32px; }
-      }
+      @media (min-width: 600px) { .card { padding: 28px; } }
 
       .section-title {
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 20px;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-sec);
       }
-      .section-title i { color: var(--primary); font-size: 24px; }
+      .section-title i { color: var(--primary); font-size: 18px; }
 
-      /* Calendar Styles */
+      /* ── Large Calendar ── */
       .cal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
-      .cal-nav { display: flex; gap: 12px; }
+      .cal-nav { display: flex; gap: 8px; }
       .cal-nav button {
-        background: var(--bg-color); border: none; width: 44px; height: 44px;
-        border-radius: 50%; cursor: pointer; color: var(--primary); font-size: 20px;
+        background: var(--bg-color); border: none; width: 36px; height: 36px;
+        border-radius: 50%; cursor: pointer; color: var(--primary); font-size: 18px;
         display: flex; align-items: center; justify-content: center;
       }
-      #cal-lbl-text { font-size: 22px; font-weight: 600; }
+      #cal-lbl-text { font-size: 20px; font-weight: 700; }
 
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 6px;
       }
-      @media (min-width: 600px) {
-        .cal-grid { gap: 12px; }
-      }
 
-      .cal-lbl { text-align: center; color: var(--text-sec); font-size: 16px; padding-bottom: 12px; font-weight: 600; }
+      .cal-lbl { text-align: center; color: var(--text-sec); font-size: 15px; padding-bottom: 10px; font-weight: 700; }
 
       .cal-day {
-        aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column;
+        aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column;
         align-items: center; justify-content: center; position: relative;
-        background: var(--bg-color); cursor: pointer; transition: 0.2s;
+        background: var(--bg-color); cursor: pointer; transition: 0.15s;
         font-size: 18px;
-      }
-      @media (min-width: 600px) {
-        .cal-day { border-radius: 16px; font-size: 22px; }
       }
 
       .cal-day:hover { background: var(--primary-light); }
@@ -155,369 +247,921 @@
       [data-theme="dark"] .day-w15 { background: #111d2c !important; border-color: #096dd9 !important; }
 
       .day-today { background: var(--primary) !important; color: white !important; font-weight: bold; border: 2px solid var(--primary) !important; }
-      .badge { font-size: 12px; opacity: 0.8; margin-top: 2px; font-weight: 600; }
-      @media (min-width: 600px) {
-        .badge { font-size: 14px; margin-top: 4px; }
-      }
+      .badge { font-size: 12px; opacity: 0.75; margin-top: 1px; font-weight: 700; }
 
-      .holiday-name { position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: bold; }
-      @media (min-width: 600px) {
-        .holiday-name { top: 6px; right: 8px; font-size: 12px; }
-      }
+      .holiday-name { position: absolute; top: 3px; right: 4px; font-size: 9px; font-weight: bold; }
 
       .note-dot {
-        position: absolute; bottom: 4px; width: 6px; height: 6px;
+        position: absolute; bottom: 3px; width: 5px; height: 5px;
         border-radius: 50%; background: var(--primary);
       }
 
-      /* Stats & Progress */
+      /* ── Stats ── */
       .stats-container { display: flex; flex-direction: column; gap: 16px; }
-      
-      .progress-item { margin-bottom: 20px; }
-      .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 16px; }
+
+      .progress-item { margin-bottom: 16px; }
+      .progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 15px; font-weight: 600; }
       .progress-bar { height: 12px; background: var(--bg-color); border-radius: 6px; overflow: hidden; }
       .progress-fill { height: 100%; background: var(--primary); width: 0; transition: width 1s; }
       .progress-fill.success { background: var(--success); }
 
-      .summary-text { font-size: 15px; color: var(--text-sec); margin-top: 8px; }
+      .summary-text { font-size: 14px; color: var(--text-sec); margin-top: 6px; }
 
       .counter-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-top: 20px;
-        padding-top: 20px;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
         border-top: 1px solid var(--border);
       }
-      .counter-item { display: flex; flex-direction: column; gap: 4px; }
-      .counter-item .label { font-size: 14px; color: var(--text-sec); text-transform: uppercase; }
-      .counter-item .val { font-size: 22px; font-weight: 700; color: var(--text-main); }
+      .counter-item { display: flex; flex-direction: column; gap: 2px; }
+      .counter-item .label { font-size: 13px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; }
+      .counter-item .val { font-size: 26px; font-weight: 700; color: var(--text-main); }
 
-      /* Holiday Cards */
+      /* ── Holiday Cards ── */
       .tip-card {
-        border-left: 6px solid var(--primary);
-        padding: 16px; background: var(--primary-light);
-        border-radius: 12px; margin-bottom: 16px;
+        border-left: 4px solid var(--primary);
+        padding: 12px; background: var(--primary-light);
+        border-radius: 10px; margin-bottom: 12px;
       }
-      .tip-title { font-weight: 600; font-size: 18px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-      .tip-desc { font-size: 15px; color: var(--text-sec); line-height: 1.5; }
-      .countdown-tag { font-size: 14px; color: var(--primary); font-weight: 600; }
+      .tip-title { font-weight: 700; font-size: 16px; margin-bottom: 2px; display: flex; justify-content: space-between; }
+      .tip-desc { font-size: 14px; color: var(--text-sec); line-height: 1.5; }
+      .countdown-tag { font-size: 14px; color: var(--primary); font-weight: 700; }
 
-      /* Modal */
-      .modal-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-        display: none; align-items: center; justify-content: center; z-index: 1000;
-        padding: 20px;
+      /* ────────────────────────────────────────────
+         MEMO PAGE
+      ──────────────────────────────────────────── */
+      .memo-page-wrapper {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        grid-template-rows: 1fr;
+        overflow: hidden;
       }
-      .modal-card {
-        background: var(--card-bg); padding: 24px; border-radius: var(--radius);
-        width: 100%; max-width: 400px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+
+      /* Left: 3-column memo editor */
+      .memo-left-container {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-right: 1px solid var(--border);
+        background: var(--bg-color);
       }
-      .modal-card h2 { font-size: 22px; margin-bottom: 16px; }
-      .modal-card textarea {
-        width: 100%; height: 160px; padding: 16px; border: 1px solid var(--border);
-        border-radius: 12px; margin-bottom: 20px; background: var(--bg-color); color: var(--text-main);
-        font-family: inherit; font-size: 18px; outline: none; resize: none;
+      .memo-nav-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 24px;
+        gap: 16px;
+        flex-shrink: 0;
+        position: relative;
       }
-      .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
-      .btn { padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; font-size: 16px; }
-      .btn-primary { background: var(--primary); color: white; }
-      .btn-ghost { background: transparent; color: var(--text-sec); }
+      .memo-date-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        color: var(--primary);
+        font-size: 18px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        box-shadow: var(--shadow);
+      }
+      .memo-date-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+      .memo-today-btn {
+        font-size: 13px;
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        cursor: pointer;
+        color: var(--text-sec);
+        transition: all 0.15s;
+        font-weight: 700;
+        box-shadow: var(--shadow);
+      }
+      .memo-today-btn:hover { border-color: var(--primary); color: var(--primary); }
+      .memo-save-status {
+        position: absolute;
+        right: 24px;
+        font-size: 12px;
+        color: var(--text-sec);
+        font-weight: bold;
+      }
+
+      .memo-cols-wrap {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        gap: 16px;
+        padding: 10px 20px 30px 20px;
+        overflow: hidden;
+      }
+      .memo-col {
+        display: flex;
+        flex-direction: column;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s;
+      }
+      .memo-col.prev-day { flex: 1; opacity: 0.85; margin: 30px 0; }
+      .memo-col.curr-day { flex: 1.3; border: 2px solid var(--primary); box-shadow: var(--shadow); transform: scale(1.02); z-index: 10; margin: 10px 4px; }
+      .memo-col.next-day { flex: 1; opacity: 0.85; margin: 30px 0; }
+      .memo-col:hover { opacity: 1; }
+
+      .memo-col-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background: var(--bg-color);
+        text-align: center;
+      }
+      .curr-day .memo-col-header { background: var(--primary-light); }
+      .memo-col-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
+      .curr-day .memo-col-title { color: var(--primary); font-size: 18px; }
+      .memo-col-sub { font-size: 12px; color: var(--text-sec); }
+
+      .memo-textarea {
+        flex: 1;
+        width: 100%;
+        border: none;
+        padding: 16px;
+        background: transparent;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        resize: none;
+        line-height: 1.8;
+      }
+      .memo-textarea::placeholder { color: var(--text-sec); opacity: 0.5; }
+
+      /* Right panel */
+      .memo-right {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--card-bg);
+        width: 280px;
+        min-width: 280px;
+      }
+
+      /* Mini cal */
+      .mini-cal-wrap {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        min-height: 260px;
+      }
+
+      .mini-cal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .mini-cal-lbl { font-size: 14px; font-weight: 700; }
+
+      .mini-cal-nav button {
+        background: none; border: none; cursor: pointer;
+        color: var(--primary); font-size: 16px;
+        width: 28px; height: 28px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.15s;
+      }
+      .mini-cal-nav button:hover { background: var(--primary-light); }
+      .mini-cal-nav { display: flex; gap: 4px; }
+
+      .mini-cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+      }
+
+      .mini-cal-day-lbl {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-sec);
+        padding-bottom: 4px;
+      }
+
+      .mini-cal-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.15s;
+        position: relative;
+        min-height: 28px;
+      }
+      .mini-cal-day:hover { background: var(--primary-light); }
+      .mini-cal-day.muted { opacity: 0.3; cursor: default; }
+      .mini-cal-day.today { background: var(--primary); color: white; font-weight: 700; }
+      .mini-cal-day.selected { outline: 2px solid var(--primary); }
+      .mini-cal-day.today.selected { outline: none; }
+      .mini-cal-day.rest { color: var(--danger); }
+      .mini-cal-day .mini-note-dot {
+        position: absolute; bottom: 1px;
+        width: 4px; height: 4px;
+        border-radius: 50%; background: var(--primary);
+      }
+      .mini-cal-day.today .mini-note-dot { background: white; }
+
+      /* TODO */
+      .todo-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 12px 16px 16px;
+      }
+
+      .todo-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-sec);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        flex-shrink: 0;
+      }
+      .todo-header i { color: var(--primary); font-size: 16px; }
+
+      .todo-input-row {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+        flex-shrink: 0;
+      }
+
+      .todo-input {
+        flex: 1;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 7px 10px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .todo-input:focus { border-color: var(--primary); }
+
+      .todo-add-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.15s;
+      }
+      .todo-add-btn:hover { opacity: 0.85; }
+
+      .todo-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .todo-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background 0.15s;
+        cursor: pointer;
+      }
+      .todo-item:hover { background: var(--bg-color); }
+
+      .todo-item.done { opacity: 0.45; }
+      .todo-item.done .todo-text { text-decoration: line-through; }
+
+      .todo-check {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 2px solid var(--border);
+        flex-shrink: 0;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        font-size: 10px;
+        color: white;
+      }
+      .todo-item.done .todo-check {
+        background: var(--success);
+        border-color: var(--success);
+      }
+
+      .todo-text {
+        font-size: 12px;
+        line-height: 1.6;
+        flex: 1;
+        color: var(--text-main);
+        word-break: break-all;
+      }
+
+      .todo-del {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-sec);
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.15s;
+        padding: 0 2px;
+        flex-shrink: 0;
+      }
+      .todo-item:hover .todo-del { opacity: 1; }
+      .todo-del:hover { color: var(--danger); }
+
+      /* ── Mobile responsive ── */
+      @media (max-width: 700px) {
+        .sidebar { width: var(--sidebar-icon-w); min-width: var(--sidebar-icon-w); }
+        .sidebar .sidebar-logo-text, .sidebar .nav-item-label { opacity: 0; width: 0; }
+
+        .memo-page-wrapper {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+        }
+        .memo-cols-wrap {
+          flex-direction: column;
+          overflow-y: auto;
+          gap: 12px;
+        }
+        .memo-col { transform: none !important; margin: 0 !important; flex: none; height: 260px; }
+        .memo-right {
+          flex-direction: row;
+          border-top: 1px solid var(--border);
+          height: 220px;
+        }
+        .mini-cal-wrap {
+          flex: 1;
+          border-bottom: none;
+          border-right: 1px solid var(--border);
+        }
+        .todo-wrap { flex: 1; }
+      }
     </style>
   </head>
   <body>
-    <div class="app-wrapper">
-      <header>
-        <div class="brand">
-          <i class="ph-fill ph-calendar-check"></i>
-          <h1>2026 工作日看板</h1>
-        </div>
-        <button class="theme-toggle" onclick="toggleTheme()">
-          <i id="theme-icon" class="ph ph-sun"></i>
-        </button>
-      </header>
+    <div class="app-shell">
 
-      <div class="dashboard-grid">
-        <section class="card">
-          <div class="cal-header">
-            <span id="cal-lbl-text">2026年 1月</span>
-            <div class="cal-nav">
-              <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
-              <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo" onclick="toggleSidebar()" title="收起/展开">
+          <i class="ph-fill ph-calendar-check"></i>
+          <span class="sidebar-logo-text">工作日看板</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-item active" id="nav-calendar" onclick="switchPage('calendar')">
+            <i class="ph ph-calendar-dots"></i>
+            <span class="nav-item-label">日历</span>
+          </div>
+          <div class="nav-item" id="nav-memo" onclick="switchPage('memo')">
+            <i class="ph ph-note-pencil"></i>
+            <span class="nav-item-label">备忘录</span>
+          </div>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="nav-item" onclick="toggleTheme()" title="切换主题">
+            <i id="theme-icon" class="ph ph-sun"></i>
+            <span class="nav-item-label">主题</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── Main Content ── -->
+      <main class="main-content">
+
+        <!-- PAGE: Calendar -->
+        <div class="page active" id="page-calendar">
+          <div class="cal-page-wrapper">
+            <div class="dashboard-grid">
+              <section class="card">
+                <div class="cal-header">
+                  <span id="cal-lbl-text">2026年 1月</span>
+                  <div class="cal-nav">
+                    <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
+                    <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
+                  </div>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+              </section>
+
+              <div class="stats-container">
+                <section class="card">
+                  <div class="section-title"><i class="ph-fill ph-chart-line-up"></i> 工作进度</div>
+
+                  <div class="progress-item">
+                    <div class="progress-label">
+                      <span>本月进度</span>
+                      <span id="m-prog-txt">0%</span>
+                    </div>
+                    <div class="progress-bar"><div id="m-prog-bar" class="progress-fill"></div></div>
+                    <div class="summary-text" id="m-summary">已工作 0 天，剩余 0 天</div>
+                  </div>
+
+                  <div class="progress-item">
+                    <div class="progress-label">
+                      <span>年度完成</span>
+                      <span id="y-prog-txt" style="color: var(--success)">0%</span>
+                    </div>
+                    <div class="progress-bar"><div id="y-prog-bar" class="progress-fill success"></div></div>
+                    <div class="summary-text" id="y-summary">2026年已过去 0 天</div>
+                  </div>
+
+                  <div class="counter-grid">
+                    <div class="counter-item">
+                      <span class="label">假期已过</span>
+                      <span class="val" id="h-pass">0</span>
+                    </div>
+                    <div class="counter-item">
+                      <span class="label">假期余额</span>
+                      <span class="val" style="color: var(--success)" id="h-rem">0</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="card">
+                  <div class="section-title"><i class="ph-fill ph-confetti"></i> 未来假期</div>
+                  <div id="holiday-list"></div>
+                </section>
+              </div>
             </div>
           </div>
-          <div class="cal-grid" id="cal-grid"></div>
-        </section>
-
-        <div class="stats-container">
-          <section class="card">
-            <div class="section-title"><i class="ph-fill ph-chart-line-up"></i> 工作进度</div>
-
-            <div class="progress-item">
-              <div class="progress-label">
-                <span>本月进度</span>
-                <span id="m-prog-txt">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div id="m-prog-bar" class="progress-fill"></div>
-              </div>
-              <div class="summary-text" id="m-summary">已工作 0 天，剩余 0 天</div>
-            </div>
-
-            <div class="progress-item">
-              <div class="progress-label">
-                <span>年度完成</span>
-                <span id="y-prog-txt" style="color: var(--success)">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div id="y-prog-bar" class="progress-fill success"></div>
-              </div>
-              <div class="summary-text" id="y-summary">2026年已过去 0 天</div>
-            </div>
-
-            <div class="counter-grid">
-              <div class="counter-item">
-                <span class="label">假期已过</span>
-                <span class="val" id="h-pass">0</span>
-              </div>
-              <div class="counter-item">
-                <span class="label">假期余额</span>
-                <span class="val" style="color: var(--success)" id="h-rem">0</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="section-title"><i class="ph-fill ph-confetti"></i> 未来假期 (Upcoming)</div>
-            <div id="holiday-list"></div>
-          </section>
         </div>
-      </div>
-    </div>
 
-    <div class="modal-overlay" id="note-modal">
-      <div class="modal-card">
-        <h2 id="modal-date-title">日程备注</h2>
-        <textarea id="note-input" placeholder="写点什么..."></textarea>
-        <div class="modal-actions">
-          <button class="btn btn-ghost" onclick="closeModal()">取消</button>
-          <button class="btn btn-primary" onclick="saveNote()">保存</button>
+        <!-- PAGE: Memo -->
+        <div class="page" id="page-memo">
+          <div class="memo-page-wrapper">
+
+            <!-- Left: 3-column memo view -->
+            <div class="memo-left-container">
+              <div class="memo-nav-top">
+                <button class="memo-date-btn" onclick="shiftMemoDate(-1)" title="上一天"><i class="ph ph-caret-left"></i></button>
+                <button class="memo-today-btn" onclick="goMemoToday()">回到今天</button>
+                <button class="memo-date-btn" onclick="shiftMemoDate(1)" title="下一天"><i class="ph ph-caret-right"></i></button>
+                <div class="memo-save-status" id="memo-save-status"></div>
+              </div>
+
+              <div class="memo-cols-wrap">
+                <!-- Yesterday -->
+                <div class="memo-col prev-day">
+                  <div class="memo-col-header">
+                    <span class="memo-col-title" id="memo-title-prev">昨天</span>
+                    <span class="memo-col-sub" id="memo-sub-prev">日期</span>
+                  </div>
+                  <textarea class="memo-textarea" id="memo-textarea-prev" placeholder="昨天的记录..."></textarea>
+                </div>
+
+                <!-- Today -->
+                <div class="memo-col curr-day">
+                  <div class="memo-col-header">
+                    <span class="memo-col-title" id="memo-title-curr">今天</span>
+                    <span class="memo-col-sub" id="memo-sub-curr">日期</span>
+                  </div>
+                  <textarea class="memo-textarea" id="memo-textarea-curr" placeholder="写点什么... 支持换行，自动保存"></textarea>
+                </div>
+
+                <!-- Tomorrow -->
+                <div class="memo-col next-day">
+                  <div class="memo-col-header">
+                    <span class="memo-col-title" id="memo-title-next">明天</span>
+                    <span class="memo-col-sub" id="memo-sub-next">日期</span>
+                  </div>
+                  <textarea class="memo-textarea" id="memo-textarea-next" placeholder="明天的规划..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: mini cal + todo -->
+            <div class="memo-right">
+              <!-- Mini Calendar -->
+              <div class="mini-cal-wrap">
+                <div class="mini-cal-header">
+                  <span class="mini-cal-lbl" id="mini-cal-lbl">3月</span>
+                  <div class="mini-cal-nav">
+                    <button onclick="changeMiniMonth(-1)"><i class="ph ph-caret-left"></i></button>
+                    <button onclick="changeMiniMonth(1)"><i class="ph ph-caret-right"></i></button>
+                  </div>
+                </div>
+                <div class="mini-cal-grid" id="mini-cal-grid"></div>
+              </div>
+
+              <!-- TODO List -->
+              <div class="todo-wrap">
+                <div class="todo-header">
+                  <i class="ph-fill ph-check-square"></i>
+                  <span>TODO</span>
+                </div>
+                <div class="todo-input-row">
+                  <input
+                    class="todo-input"
+                    id="todo-input"
+                    type="text"
+                    placeholder="新增待办..."
+                    onkeydown="if(event.key==='Enter') addTodo()"
+                  />
+                  <button class="todo-add-btn" onclick="addTodo()"><i class="ph ph-plus"></i></button>
+                </div>
+                <div class="todo-list" id="todo-list"></div>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
+
+      </main>
     </div>
 
     <script>
+      // ─── Core Data ───
       const sysT = new Date();
-      const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 0, 5);
+      const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 2, 23);
       let viewM = t.getMonth();
+
+      // notes: {dateStr: text}
       let notes = JSON.parse(localStorage.getItem('workday_notes') || '{}');
-      let selectedDate = null;
+      // todos: [{id, text, done}]
+      let todos = JSON.parse(localStorage.getItem('workday_todos') || '[]');
 
-      function calc() {
-        let yp = 0, yt = 0, mp = 0, mt = 0, hp = 0, hr = 0;
-        const s = new Date(2026, 0, 1), e = new Date(2026, 11, 31);
-        for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
-          const w = isWork(d);
-          if (w) {
-            yt++;
-            if (d <= t) yp++;
-            if (d.getMonth() === t.getMonth()) {
-              mt++;
-              if (d <= t) mp++;
-            }
-          }
-          const strD = fmt(d);
-          if (DATA.h[strD] && d.getDay() !== 0 && d.getDay() !== 6) {
-            if (d <= t) hp++;
-            else hr++;
-          }
-        }
-        const yPct = ((yp / yt) * 100).toFixed(1);
-        const mPct = ((mp / mt) * 100).toFixed(1);
+      // Memo state
+      let memoDate = new Date(t);
+      let miniCalYear = 2026;
+      let miniCalMonth = memoDate.getMonth();
+      let memoSaveTimer = null;
 
-        document.getElementById("m-prog-txt").innerText = mPct + "%";
-        document.getElementById("m-prog-bar").style.width = mPct + "%";
-        document.getElementById("m-summary").innerText = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
-
-        document.getElementById("y-prog-txt").innerText = yPct + "%";
-        document.getElementById("y-prog-bar").style.width = yPct + "%";
-        const yDaysPast = Math.floor((t - (new Date(2026, 0, 1))) / 86400000) + 1;
-        document.getElementById("y-summary").innerText = `2026年已过去 ${yDaysPast} 天`;
-
-        document.getElementById("h-pass").innerText = hp;
-        document.getElementById("h-rem").innerText = hr;
-
+      // ─── Utilities ───
+      function dateLabel(d) {
+        const m = d.getMonth() + 1, day = d.getDate();
+        return `${d.getFullYear()}年${m}月${day}日`;
       }
 
-      function updateHolidays() {
-        const list = document.getElementById("holiday-list");
-        list.innerHTML = "";
-        const holidays = [];
-        const sortedDates = Object.keys(DATA.h).sort();
+      const WD_NAMES = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
 
-        let currentRange = null;
-        for (const dateStr of sortedDates) {
-          const date = new Date(dateStr);
-          const name = DATA.h[dateStr];
-
-          if (currentRange && currentRange.name === name &&
-              (date - currentRange.end) <= 86400000 * 1.5) {
-            currentRange.end = date;
-          } else {
-            currentRange = { name, start: date, end: date };
-            holidays.push(currentRange);
-          }
-        }
-
-        holidays.forEach(h => {
-          if (h.end < t && fmt(h.end) !== fmt(t)) return;
-
-          let workdaysUntil = 0;
-          if (h.start > t) {
-            let d = new Date(t);
-            d.setDate(d.getDate() + 1);
-            while (d < h.start) {
-              if (isWork(d)) workdaysUntil++;
-              d.setDate(d.getDate() + 1);
-            }
-          }
-
-          const card = document.createElement("div");
-          card.className = "tip-card";
-
-          const title = document.createElement("div");
-          title.className = "tip-title";
-          const statusTxt = h.start > t ? `待搬砖: ${workdaysUntil}天` : "进行中";
-          title.innerHTML = `<span>${h.name}</span> <span class="countdown-tag">${statusTxt}</span>`;
-
-          const desc = document.createElement("div");
-          desc.className = "tip-desc";
-          const startStr = (h.start.getMonth() + 1) + "月" + h.start.getDate() + "日";
-          const endStr = (h.end.getMonth() + 1) + "月" + h.end.getDate() + "日";
-          desc.innerText = startStr === endStr ? startStr : `${startStr} 至 ${endStr}`;
-
-          card.appendChild(title);
-          card.appendChild(desc);
-          list.appendChild(card);
-        });
+      // ─── Sidebar ───
+      let sidebarCollapsed = false;
+      function toggleSidebar() {
+        sidebarCollapsed = !sidebarCollapsed;
+        document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
       }
-      function buildCal(y, m) {
-        const grid = document.getElementById("cal-grid");
-        grid.innerHTML = "";
-        document.getElementById("cal-lbl-text").innerText = `${y}年 ${m + 1}月`;
 
-        ["日", "一", "二", "三", "四", "五", "六"].forEach(txt => {
-          const di = document.createElement("div"); di.className = "cal-lbl"; di.innerText = txt; grid.appendChild(di);
-        });
-
-        const firstD = new Date(y, m, 1).getDay();
-        const daysInM = new Date(y, m + 1, 0).getDate();
-        const prevM_daysInM = new Date(y, m, 0).getDate();
-        const todayStr = fmt(t);
-
-        for (let i = firstD - 1; i >= 0; i--) {
-          const day = prevM_daysInM - i;
-          const di = document.createElement("div");
-          di.className = "cal-day day-muted";
-          const span = document.createElement("span");
-          span.className = "day-num";
-          span.innerText = day;
-          di.appendChild(span);
-          grid.appendChild(di);
-        }
-
-        let wCnt = 0;
-        for (let day = 1; day <= daysInM; day++) {
-          const date = new Date(y, m, day), str = fmt(date), work = isWork(date), holidayName = DATA.h[str];
-          if (work) wCnt++;
-          const di = document.createElement("div"); di.className = "cal-day";
-          if (work && (wCnt === 6 || wCnt === 15)) di.classList.add(wCnt === 6 ? "day-w6" : "day-w15");
-          if (str === todayStr) di.classList.add("day-today");
-          if (holidayName) di.classList.add("day-holiday");
-          else if (!work) di.classList.add("day-rest");
-
-          const num = document.createElement("span");
-          num.className = "day-num";
-          num.innerText = day;
-          di.appendChild(num);
-
-          if (work) {
-            const badge = document.createElement("span");
-            badge.className = "badge";
-            badge.innerText = `W${wCnt}`;
-            di.appendChild(badge);
-          }
-
-          if (holidayName) {
-            const hName = document.createElement("span");
-            hName.className = "holiday-name";
-            hName.innerText = holidayName;
-            di.appendChild(hName);
-          }
-
-          if (notes[str]) {
-            const dot = document.createElement("div");
-            dot.className = "note-dot";
-            di.appendChild(dot);
-          }
-
-          di.onclick = () => openModal(str);
-          grid.appendChild(di);
-        }
-
-        const totalCells = firstD + daysInM;
-        const lastRowExtra = (7 - (totalCells % 7)) % 7;
-        for (let day = 1; day <= lastRowExtra; day++) {
-          const di = document.createElement("div");
-          di.className = "cal-day day-muted";
-          const span = document.createElement("span");
-          span.className = "day-num";
-          span.innerText = day;
-          di.appendChild(span);
-          grid.appendChild(di);
+      // ─── Page Switch ───
+      function switchPage(name) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('page-' + name).classList.add('active');
+        document.getElementById('nav-' + name).classList.add('active');
+        if (name === 'memo') {
+          renderMemoDate();
+          buildMiniCal();
+          renderTodos();
         }
       }
 
-      function openModal(dateStr) {
-        selectedDate = dateStr;
-        document.getElementById("modal-date-title").innerText = `${dateStr} 日程备注`;
-        document.getElementById("note-input").value = notes[dateStr] || "";
-        document.getElementById("note-modal").style.display = "flex";
-        setTimeout(() => document.getElementById("note-input").focus(), 100);
-      }
-      function closeModal() { document.getElementById("note-modal").style.display = "none"; }
-      function saveNote() {
-        const val = document.getElementById("note-input").value.trim();
-        if (val) notes[selectedDate] = val; else delete notes[selectedDate];
-        localStorage.setItem('workday_notes', JSON.stringify(notes));
-        buildCal(2026, viewM); updateHolidays(); closeModal();
-      }
 
+      // ─── Theme ───
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        if (body.getAttribute("data-theme") === "dark") {
-          body.removeAttribute("data-theme");
-          icon.className = "ph ph-sun";
+        const icon = document.getElementById('theme-icon');
+        if (body.getAttribute('data-theme') === 'dark') {
+          body.removeAttribute('data-theme');
+          icon.className = 'ph ph-sun';
           localStorage.setItem('theme', 'light');
         } else {
-          body.setAttribute("data-theme", "dark");
-          icon.className = "ph ph-moon";
+          body.setAttribute('data-theme', 'dark');
+          icon.className = 'ph ph-moon';
           localStorage.setItem('theme', 'dark');
         }
       }
 
+      // ─── Calendar Page ───
+      function calc() {
+        let yp=0,yt=0,mp=0,mt=0,hp=0,hr=0;
+        const s=new Date(2026,0,1), e=new Date(2026,11,31);
+        for (let d=new Date(s); d<=e; d.setDate(d.getDate()+1)) {
+          const w=isWork(d);
+          if (w) {
+            yt++;
+            if (d<=t) yp++;
+            if (d.getMonth()===t.getMonth()) { mt++; if (d<=t) mp++; }
+          }
+          const strD=fmt(d);
+          if (DATA.h[strD] && d.getDay()!==0 && d.getDay()!==6) {
+            if (d<=t) hp++; else hr++;
+          }
+        }
+        const yPct=((yp/yt)*100).toFixed(1);
+        const mPct=((mp/mt)*100).toFixed(1);
+        document.getElementById('m-prog-txt').innerText=mPct+'%';
+        document.getElementById('m-prog-bar').style.width=mPct+'%';
+        document.getElementById('m-summary').innerText=`已工作 ${mp} 天，剩余 ${mt-mp} 天`;
+        document.getElementById('y-prog-txt').innerText=yPct+'%';
+        document.getElementById('y-prog-bar').style.width=yPct+'%';
+        const yDaysPast=Math.floor((t-new Date(2026,0,1))/86400000)+1;
+        document.getElementById('y-summary').innerText=`2026年已过去 ${yDaysPast} 天`;
+        document.getElementById('h-pass').innerText=hp;
+        document.getElementById('h-rem').innerText=hr;
+      }
+
+      function updateHolidays() {
+        const list=document.getElementById('holiday-list');
+        list.innerHTML='';
+        const holidays=[];
+        const sortedDates=Object.keys(DATA.h).sort();
+        let currentRange=null;
+        for (const dateStr of sortedDates) {
+          const date=new Date(dateStr), name=DATA.h[dateStr];
+          if (currentRange && currentRange.name===name && (date-currentRange.end)<=86400000*1.5) {
+            currentRange.end=date;
+          } else {
+            currentRange={name,start:date,end:date};
+            holidays.push(currentRange);
+          }
+        }
+        holidays.forEach(h => {
+          if (h.end<t && fmt(h.end)!==fmt(t)) return;
+          let workdaysUntil=0;
+          if (h.start>t) {
+            let d=new Date(t); d.setDate(d.getDate()+1);
+            while (d<h.start) { if (isWork(d)) workdaysUntil++; d.setDate(d.getDate()+1); }
+          }
+          const card=document.createElement('div'); card.className='tip-card';
+          const title=document.createElement('div'); title.className='tip-title';
+          const statusTxt=h.start>t?`待搬砖: ${workdaysUntil}天`:'进行中';
+          title.innerHTML=`<span>${h.name}</span><span class="countdown-tag">${statusTxt}</span>`;
+          const desc=document.createElement('div'); desc.className='tip-desc';
+          const startStr=(h.start.getMonth()+1)+'月'+h.start.getDate()+'日';
+          const endStr=(h.end.getMonth()+1)+'月'+h.end.getDate()+'日';
+          desc.innerText=startStr===endStr?startStr:`${startStr} 至 ${endStr}`;
+          card.appendChild(title); card.appendChild(desc); list.appendChild(card);
+        });
+      }
+
+      function buildCal(y, m) {
+        const grid=document.getElementById('cal-grid');
+        grid.innerHTML='';
+        document.getElementById('cal-lbl-text').innerText=`${y}年 ${m+1}月`;
+        ['日','一','二','三','四','五','六'].forEach(txt => {
+          const di=document.createElement('div'); di.className='cal-lbl'; di.innerText=txt; grid.appendChild(di);
+        });
+        const firstD=new Date(y,m,1).getDay(), daysInM=new Date(y,m+1,0).getDate();
+        const prevMDays=new Date(y,m,0).getDate(), todayStr=fmt(t);
+        for (let i=firstD-1; i>=0; i--) {
+          const di=document.createElement('div'); di.className='cal-day day-muted';
+          const sp=document.createElement('span'); sp.innerText=prevMDays-i; di.appendChild(sp); grid.appendChild(di);
+        }
+        let wCnt=0;
+        for (let day=1; day<=daysInM; day++) {
+          const date=new Date(y,m,day), str=fmt(date), work=isWork(date), holidayName=DATA.h[str];
+          if (work) wCnt++;
+          const di=document.createElement('div'); di.className='cal-day';
+          if (work && (wCnt===6||wCnt===15)) di.classList.add(wCnt===6?'day-w6':'day-w15');
+          if (str===todayStr) di.classList.add('day-today');
+          if (holidayName) di.classList.add('day-holiday');
+          else if (!work) di.classList.add('day-rest');
+          const num=document.createElement('span'); num.className='day-num'; num.innerText=day; di.appendChild(num);
+          if (work) { const badge=document.createElement('span'); badge.className='badge'; badge.innerText=`W${wCnt}`; di.appendChild(badge); }
+          if (holidayName) { const hn=document.createElement('span'); hn.className='holiday-name'; hn.innerText=holidayName; di.appendChild(hn); }
+          if (notes[str]) { const dot=document.createElement('div'); dot.className='note-dot'; di.appendChild(dot); }
+          // Click: go to memo page for this date
+          di.onclick = () => {
+            memoDate = new Date(y, m, day);
+            miniCalYear = y; miniCalMonth = m;
+            switchPage('memo');
+          };
+          grid.appendChild(di);
+        }
+        const total=firstD+daysInM, extra=(7-(total%7))%7;
+        for (let day=1; day<=extra; day++) {
+          const di=document.createElement('div'); di.className='cal-day day-muted';
+          const sp=document.createElement('span'); sp.innerText=day; di.appendChild(sp); grid.appendChild(di);
+        }
+      }
+
       function changeMonth(d) {
-        viewM += d;
-        if (viewM > 11) viewM = 0; else if (viewM < 0) viewM = 11;
+        viewM+=d;
+        if (viewM>11) viewM=0; else if (viewM<0) viewM=11;
         buildCal(2026, viewM);
       }
 
-      // Initial Theme
+      // ─── Memo Page ───
+      let dPrev = new Date(), dCurr = new Date(), dNext = new Date();
+      function renderMemoDate() {
+        dCurr = new Date(memoDate);
+        dPrev = new Date(memoDate); dPrev.setDate(dPrev.getDate() - 1);
+        dNext = new Date(memoDate); dNext.setDate(dNext.getDate() + 1);
+
+        const sPrev = fmt(dPrev), sCurr = fmt(dCurr), sNext = fmt(dNext);
+        const yestT = new Date(t); yestT.setDate(yestT.getDate() - 1);
+        const tomT = new Date(t); tomT.setDate(tomT.getDate() + 1);
+        const aToday = fmt(t), aYest = fmt(yestT), aTom = fmt(tomT);
+        
+        function setCol(prefix, dObj, sStr) {
+          let title = WD_NAMES[dObj.getDay()];
+          if (sStr === aYest) title = "昨天";
+          else if (sStr === aToday) title = "今天";
+          else if (sStr === aTom) title = "明天";
+
+          document.getElementById('memo-title-' + prefix).innerText = title;
+          document.getElementById('memo-sub-' + prefix).innerText = dateLabel(dObj);
+          document.getElementById('memo-textarea-' + prefix).value = notes[sStr] || '';
+        }
+
+        setCol('prev', dPrev, sPrev);
+        setCol('curr', dCurr, sCurr);
+        setCol('next', dNext, sNext);
+
+        document.getElementById('memo-save-status').innerText = '';
+      }
+
+      function shiftMemoDate(delta) {
+        saveMemoNow();
+        memoDate.setDate(memoDate.getDate() + delta);
+        miniCalYear = memoDate.getFullYear();
+        miniCalMonth = memoDate.getMonth();
+        renderMemoDate();
+        buildMiniCal();
+      }
+
+      function goMemoToday() {
+        saveMemoNow();
+        memoDate = new Date(t);
+        miniCalYear = memoDate.getFullYear();
+        miniCalMonth = memoDate.getMonth();
+        renderMemoDate();
+        buildMiniCal();
+      }
+
+      function onMemoInput() {
+        clearTimeout(memoSaveTimer);
+        document.getElementById('memo-save-status').innerText = '编辑中...';
+        memoSaveTimer = setTimeout(saveMemoNow, 800);
+      }
+
+      function saveMemoNow() {
+        const sPrev = fmt(dPrev), sCurr = fmt(dCurr), sNext = fmt(dNext);
+        const vPrev = document.getElementById('memo-textarea-prev').value;
+        const vCurr = document.getElementById('memo-textarea-curr').value;
+        const vNext = document.getElementById('memo-textarea-next').value;
+        
+        if (vPrev.trim()) notes[sPrev] = vPrev; else delete notes[sPrev];
+        if (vCurr.trim()) notes[sCurr] = vCurr; else delete notes[sCurr];
+        if (vNext.trim()) notes[sNext] = vNext; else delete notes[sNext];
+        
+        localStorage.setItem('workday_notes', JSON.stringify(notes));
+        document.getElementById('memo-save-status').innerText = '已保存 ✓';
+        buildMiniCal(); // refresh dots
+      }
+
+      // ─── Mini Calendar ───
+      function buildMiniCal() {
+        const grid = document.getElementById('mini-cal-grid');
+        grid.innerHTML = '';
+        document.getElementById('mini-cal-lbl').innerText = `${miniCalYear}年${miniCalMonth+1}月`;
+        const todayStr = fmt(t);
+        const selStr = fmt(memoDate);
+
+        ['日','一','二','三','四','五','六'].forEach(txt => {
+          const di = document.createElement('div'); di.className='mini-cal-day-lbl'; di.innerText=txt; grid.appendChild(di);
+        });
+
+        const firstD = new Date(miniCalYear, miniCalMonth, 1).getDay();
+        const daysInM = new Date(miniCalYear, miniCalMonth+1, 0).getDate();
+        const prevMDays = new Date(miniCalYear, miniCalMonth, 0).getDate();
+
+        for (let i=firstD-1; i>=0; i--) {
+          const di = document.createElement('div'); di.className='mini-cal-day muted'; di.innerText=prevMDays-i; grid.appendChild(di);
+        }
+
+        for (let day=1; day<=daysInM; day++) {
+          const date=new Date(miniCalYear, miniCalMonth, day), str=fmt(date), work=isWork(date);
+          const di = document.createElement('div'); di.className='mini-cal-day';
+          if (!work) di.classList.add('rest');
+          if (str===todayStr) di.classList.add('today');
+          if (str===selStr && str!==todayStr) di.classList.add('selected');
+          if (str===selStr && str===todayStr) { /* today is selected, blue circle covers */ }
+          di.innerText = day;
+          if (notes[str]) { const dot=document.createElement('div'); dot.className='mini-note-dot'; di.appendChild(dot); }
+          di.onclick = () => {
+            saveMemoNow();
+            memoDate = new Date(miniCalYear, miniCalMonth, day);
+            renderMemoDate();
+            buildMiniCal();
+          };
+          grid.appendChild(di);
+        }
+
+        const total=firstD+daysInM, extra=(7-(total%7))%7;
+        for (let day=1; day<=extra; day++) {
+          const di=document.createElement('div'); di.className='mini-cal-day muted'; di.innerText=day; grid.appendChild(di);
+        }
+      }
+
+      function changeMiniMonth(delta) {
+        miniCalMonth += delta;
+        if (miniCalMonth > 11) { miniCalMonth=0; miniCalYear++; }
+        else if (miniCalMonth < 0) { miniCalMonth=11; miniCalYear--; }
+        buildMiniCal();
+      }
+
+      // ─── TODO ───
+      function renderTodos() {
+        const list = document.getElementById('todo-list');
+        list.innerHTML = '';
+        // pending first, done at bottom
+        const pending = todos.filter(t => !t.done);
+        const done = todos.filter(t => t.done);
+        [...pending, ...done].forEach(todo => {
+          const item = document.createElement('div');
+          item.className = 'todo-item' + (todo.done ? ' done' : '');
+
+          const check = document.createElement('div');
+          check.className = 'todo-check';
+          if (todo.done) check.innerHTML = '<i class="ph ph-check"></i>';
+
+          const text = document.createElement('div');
+          text.className = 'todo-text';
+          text.innerText = todo.text;
+
+          const del = document.createElement('button');
+          del.className = 'todo-del';
+          del.innerHTML = '<i class="ph ph-x"></i>';
+          del.onclick = (e) => { e.stopPropagation(); deleteTodo(todo.id); };
+
+          item.onclick = () => toggleTodo(todo.id);
+          item.appendChild(check);
+          item.appendChild(text);
+          item.appendChild(del);
+          list.appendChild(item);
+        });
+      }
+
+      function addTodo() {
+        const input = document.getElementById('todo-input');
+        const text = input.value.trim();
+        if (!text) return;
+        todos.push({ id: Date.now(), text, done: false });
+        input.value = '';
+        saveTodos();
+        renderTodos();
+      }
+
+      function toggleTodo(id) {
+        const todo = todos.find(t => t.id === id);
+        if (todo) { todo.done = !todo.done; saveTodos(); renderTodos(); }
+      }
+
+      function deleteTodo(id) {
+        todos = todos.filter(t => t.id !== id);
+        saveTodos();
+        renderTodos();
+      }
+
+      function saveTodos() {
+        localStorage.setItem('workday_todos', JSON.stringify(todos));
+      }
+
+      // ─── Init ───
+      ['prev','curr','next'].forEach(prefix => {
+        document.getElementById('memo-textarea-'+prefix).addEventListener('input', onMemoInput);
+      });
+
       if (localStorage.getItem('theme') === 'dark') {
-        document.body.setAttribute("data-theme", "dark");
-        document.getElementById("theme-icon").className = "ph ph-moon";
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-icon').className = 'ph ph-moon';
       }
 
       calc(); buildCal(2026, viewM); updateHolidays();
