@@ -232,10 +232,7 @@ body {
 .day-rest, .day-holiday { color: var(--danger); }
 .day-muted { opacity: 0.25; cursor: default; }
 
-.day-w6 { background: #fff7e6 !important; border: 2px solid #ffa940 !important; }
-[data-theme="dark"] .day-w6 { background: #2b2111 !important; border-color: #d48806 !important; }
-.day-w15 { background: #e6f7ff !important; border: 2px solid #40a9ff !important; }
-[data-theme="dark"] .day-w15 { background: #111d2c !important; border-color: #096dd9 !important; }
+.day-w6 .badge, .day-w15 .badge { color: var(--primary); opacity: 1; font-weight: bold; }
 
 .day-today { background: var(--primary) !important; color: white !important; font-weight: bold; border: 2px solid var(--primary) !important; }
 .badge { font-size: 12px; opacity: 0.75; margin-top: 1px; font-weight: 700; }
