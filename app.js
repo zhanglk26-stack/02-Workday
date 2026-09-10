@@ -109,7 +109,6 @@ function renderCalendar() {
     renderMonthBlock(wrapper, 2026, viewM);
   }
 
-  renderQuickMonthSelector();
   renderQuickMonthGrid();
   calc();
   updateHolidays();
@@ -121,7 +120,7 @@ function renderMonthBlock(container, y, m) {
   const monthBlock = document.createElement('div');
   monthBlock.className = 'month-block';
 
-  // Month Header
+  // Month Header with Relocated "回到今天" Button
   const header = document.createElement('div');
   header.className = 'month-block-header';
 
@@ -133,8 +132,14 @@ function renderMonthBlock(container, y, m) {
   }
 
   header.innerHTML = `
-    <div class="month-title">${y}年 ${m + 1}月</div>
-    <div class="month-stats-badge">共 ${workdaysInMonth} 个工作日</div>
+    <div class="month-header-left">
+      <span class="month-title">${y}年 ${m + 1}月</span>
+      <span class="month-stats-badge">共 ${workdaysInMonth} 个工作日</span>
+    </div>
+    <button class="btn-today-inline" onclick="goToday()" title="回到今天">
+      <i class="ph ph-target"></i>
+      <span>回到今天</span>
+    </button>
   `;
   monthBlock.appendChild(header);
 
@@ -159,10 +164,23 @@ function renderMonthBlock(container, y, m) {
   for (let i = firstD - 1; i >= 0; i--) {
     const di = document.createElement('div');
     di.className = 'cal-day muted';
+
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header';
+
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
     num.innerText = prevMDays - i;
-    di.appendChild(num);
+    dayBody.appendChild(num);
+
+    const dayFooter = document.createElement('div');
+    dayFooter.className = 'day-footer';
+
+    di.appendChild(dayHeader);
+    di.appendChild(dayBody);
+    di.appendChild(dayFooter);
     grid.appendChild(di);
   }
 
@@ -180,7 +198,7 @@ function renderMonthBlock(container, y, m) {
     const di = document.createElement('div');
     di.className = 'cal-day';
 
-    // Option A: Highlight W6 and W15
+    // Highlight W6 and W15
     if (work && (wCnt === 6 || wCnt === 15)) {
       di.classList.add(wCnt === 6 ? 'day-w6' : 'day-w15');
     }
@@ -195,14 +213,9 @@ function renderMonthBlock(container, y, m) {
       di.classList.add('day-rest');
     }
 
-    // Top Row: Number & Status Tag
+    // Top Row: Status Tag
     const dayHeader = document.createElement('div');
     dayHeader.className = 'day-header';
-
-    const num = document.createElement('span');
-    num.className = 'day-num';
-    num.innerText = day;
-    dayHeader.appendChild(num);
 
     if (holidayName) {
       const tag = document.createElement('span');
@@ -216,6 +229,15 @@ function renderMonthBlock(container, y, m) {
       dayHeader.appendChild(tag);
     }
     di.appendChild(dayHeader);
+
+    // Center Row: Centered Large Day Number
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
+    const num = document.createElement('span');
+    num.className = 'day-num';
+    num.innerText = day;
+    dayBody.appendChild(num);
+    di.appendChild(dayBody);
 
     // Bottom Row: Workday Badge or Holiday Name Label
     const dayFooter = document.createElement('div');
@@ -251,30 +273,28 @@ function renderMonthBlock(container, y, m) {
   for (let day = 1; day <= extra; day++) {
     const di = document.createElement('div');
     di.className = 'cal-day muted';
+
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header';
+
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
     num.innerText = day;
-    di.appendChild(num);
+    dayBody.appendChild(num);
+
+    const dayFooter = document.createElement('div');
+    dayFooter.className = 'day-footer';
+
+    di.appendChild(dayHeader);
+    di.appendChild(dayBody);
+    di.appendChild(dayFooter);
     grid.appendChild(di);
   }
 
   monthBlock.appendChild(grid);
   container.appendChild(monthBlock);
-}
-
-// ─── Quick Month Selector Pills (Header) ───
-function renderQuickMonthSelector() {
-  const container = document.getElementById('quick-month-selector');
-  if (!container) return;
-  container.innerHTML = '';
-
-  for (let m = 0; m < 12; m++) {
-    const pill = document.createElement('button');
-    pill.className = 'month-pill' + (m === viewM ? ' active' : '');
-    pill.innerText = `${m + 1}月`;
-    pill.onclick = () => selectMonth(m);
-    container.appendChild(pill);
-  }
 }
 
 // ─── Quick Month Navigation Grid (Left Sidebar) ───

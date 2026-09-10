@@ -8,12 +8,12 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=4" />
+    <link rel="stylesheet" href="style.css?v=5" />
   </head>
   <body>
     <div class="app-container">
 
-      <!-- Top Header / Bar (Unified Navigation & View Switches) -->
+      <!-- Clean & Spacious Top Header -->
       <header class="app-header">
         <div class="header-left">
           <div class="brand-badge">
@@ -22,7 +22,7 @@
             <span class="brand-year">2026</span>
           </div>
 
-          <!-- Month Navigation & Quick Selector integrated into Header -->
+          <!-- Month Nav Arrow Buttons -->
           <div class="header-month-nav" id="header-month-nav">
             <div class="month-nav-group">
               <button class="btn-circle" onclick="changeMonth(-1)" title="上个月">
@@ -32,9 +32,6 @@
               <button class="btn-circle" onclick="changeMonth(1)" title="下个月">
                 <i class="ph ph-caret-right"></i>
               </button>
-            </div>
-            <div class="quick-month-selector" id="quick-month-selector">
-              <!-- JS will populate 12 month buttons -->
             </div>
           </div>
         </div>
@@ -58,10 +55,6 @@
         </div>
 
         <div class="header-right">
-          <button class="btn-today" onclick="goToday()" title="回到今天">
-            <i class="ph ph-target"></i>
-            <span>回到今天</span>
-          </button>
           <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="切换主题">
             <i id="theme-icon" class="ph ph-sun"></i>
           </button>
@@ -71,7 +64,7 @@
       <!-- Main Dashboard Grid Content -->
       <main class="dashboard-container" id="dashboard-container">
 
-        <!-- Left Sidebar: Selected Date Detail Inspection Card -->
+        <!-- Left Sidebar: Selected Date Detail Inspection Card & Quick Month Navigation -->
         <aside class="dash-left-sidebar">
           <div class="dash-card date-detail-card" id="date-detail-card">
             <div class="detail-header">
@@ -97,11 +90,11 @@
             </div>
           </div>
 
-          <!-- Quick Month Jump Card -->
+          <!-- Quick Month Navigation Card -->
           <div class="dash-card quick-nav-card">
             <div class="card-title">
               <i class="ph ph-compass"></i>
-              <span>快速导航</span>
+              <span>月份导航</span>
             </div>
             <div class="quick-month-grid" id="quick-month-grid">
               <!-- JS will populate month grid items -->
@@ -177,7 +170,7 @@
         </aside>
       </main>
 
-      <!-- Year Overview View Container (Hidden when not in 'year' view) -->
+      <!-- Year Overview View Container -->
       <section class="year-view-container" id="year-view-container" style="display: none;">
         <div class="year-header">
           <div class="year-title">2026 年法定节假日与工作日图谱</div>
@@ -195,7 +188,7 @@
 
     </div>
 
-    <script src="workday.js?v=4"></script>
-    <script src="app.js?v=4"></script>
+    <script src="workday.js?v=5"></script>
+    <script src="app.js?v=5"></script>
   </body>
 </html>
