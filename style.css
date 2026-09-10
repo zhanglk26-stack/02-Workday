@@ -520,17 +520,18 @@ body {
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  grid-template-rows: auto repeat(6, 1fr);
+  gap: 4px 6px;
   flex: 1;
 }
 
-/* Clean Weekday Headers (No Background Fill) */
+/* Clean Weekday Headers (No Background Fill, Tight Gap to First Row) */
 .cal-weekday {
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-muted);
-  padding: 4px 0 8px;
+  padding: 2px 0 4px;
   background: transparent;
   border-radius: 0;
 }
@@ -612,11 +613,11 @@ body {
   align-items: center;
   justify-content: center;
   flex: 1;
-  margin: 2px 0;
+  margin: 1px 0;
 }
 
 .day-num {
-  font-size: 1.45rem;
+  font-size: 1.68rem;
   font-weight: 800;
   color: var(--text-main);
   line-height: 1;
@@ -628,9 +629,9 @@ body {
 }
 
 .day-status-tag {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 1px 3px;
+  padding: 1px 4px;
   border-radius: 2px;
   line-height: 1;
 }
@@ -653,8 +654,8 @@ body {
 }
 
 .workday-badge {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--text-muted);
 }
 
@@ -663,7 +664,7 @@ body {
 .day-w15 .workday-badge {
   background: var(--accent-primary);
   color: #ffffff;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 800;
   padding: 2px 6px;
   border-radius: var(--radius-sm);
@@ -671,8 +672,8 @@ body {
 }
 
 .holiday-label {
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--danger);
   white-space: nowrap;
   overflow: hidden;
