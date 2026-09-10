@@ -44,19 +44,19 @@ function setViewMode(mode) {
   const activeTab = document.getElementById('tab-' + mode);
   if (activeTab) activeTab.classList.add('active');
 
-  const bentoContainer = document.getElementById('bento-container');
+  const dashContainer = document.getElementById('dashboard-container');
   const yearContainer = document.getElementById('year-view-container');
-  const navControlBar = document.getElementById('nav-control-bar');
+  const monthNav = document.getElementById('header-month-nav');
 
   if (mode === 'year') {
-    bentoContainer.style.display = 'none';
+    dashContainer.style.display = 'none';
     yearContainer.style.display = 'block';
-    if (navControlBar) navControlBar.style.display = 'none';
+    if (monthNav) monthNav.style.display = 'none';
     renderYearView();
   } else {
-    bentoContainer.style.display = 'grid';
+    dashContainer.style.display = 'grid';
     yearContainer.style.display = 'none';
-    if (navControlBar) navControlBar.style.display = 'flex';
+    if (monthNav) monthNav.style.display = 'flex';
     renderCalendar();
   }
 }
@@ -109,7 +109,7 @@ function renderCalendar() {
     renderMonthBlock(wrapper, 2026, viewM);
   }
 
-  renderQuickMonthSelector();
+  renderQuickMonthGrid();
   calc();
   updateHolidays();
   renderDateDetail(selectedDate);
@@ -120,7 +120,7 @@ function renderMonthBlock(container, y, m) {
   const monthBlock = document.createElement('div');
   monthBlock.className = 'month-block';
 
-  // Month Header
+  // Month Header with Relocated "回到今天" Button
   const header = document.createElement('div');
   header.className = 'month-block-header';
 
@@ -132,8 +132,14 @@ function renderMonthBlock(container, y, m) {
   }
 
   header.innerHTML = `
-    <div class="month-title">${y}年 ${m + 1}月</div>
-    <div class="month-stats-badge">共 ${workdaysInMonth} 个工作日</div>
+    <div class="month-header-left">
+      <span class="month-title">${y}年 ${m + 1}月</span>
+      <span class="month-stats-badge">共 ${workdaysInMonth} 个工作日</span>
+    </div>
+    <button class="btn-today-inline" onclick="goToday()" title="回到今天">
+      <i class="ph ph-target"></i>
+      <span>回到今天</span>
+    </button>
   `;
   monthBlock.appendChild(header);
 
@@ -158,10 +164,23 @@ function renderMonthBlock(container, y, m) {
   for (let i = firstD - 1; i >= 0; i--) {
     const di = document.createElement('div');
     di.className = 'cal-day muted';
+
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header';
+
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
     num.innerText = prevMDays - i;
-    di.appendChild(num);
+    dayBody.appendChild(num);
+
+    const dayFooter = document.createElement('div');
+    dayFooter.className = 'day-footer';
+
+    di.appendChild(dayHeader);
+    di.appendChild(dayBody);
+    di.appendChild(dayFooter);
     grid.appendChild(di);
   }
 
@@ -179,6 +198,7 @@ function renderMonthBlock(container, y, m) {
     const di = document.createElement('div');
     di.className = 'cal-day';
 
+    // Highlight W6 and W15
     if (work && (wCnt === 6 || wCnt === 15)) {
       di.classList.add(wCnt === 6 ? 'day-w6' : 'day-w15');
     }
@@ -193,14 +213,9 @@ function renderMonthBlock(container, y, m) {
       di.classList.add('day-rest');
     }
 
-    // Top Row: Number & Status Tag
+    // Top Row: Status Tag
     const dayHeader = document.createElement('div');
     dayHeader.className = 'day-header';
-
-    const num = document.createElement('span');
-    num.className = 'day-num';
-    num.innerText = day;
-    dayHeader.appendChild(num);
 
     if (holidayName) {
       const tag = document.createElement('span');
@@ -214,6 +229,15 @@ function renderMonthBlock(container, y, m) {
       dayHeader.appendChild(tag);
     }
     di.appendChild(dayHeader);
+
+    // Center Row: Centered Large Day Number
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
+    const num = document.createElement('span');
+    num.className = 'day-num';
+    num.innerText = day;
+    dayBody.appendChild(num);
+    di.appendChild(dayBody);
 
     // Bottom Row: Workday Badge or Holiday Name Label
     const dayFooter = document.createElement('div');
@@ -249,10 +273,23 @@ function renderMonthBlock(container, y, m) {
   for (let day = 1; day <= extra; day++) {
     const di = document.createElement('div');
     di.className = 'cal-day muted';
+
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header';
+
+    const dayBody = document.createElement('div');
+    dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
     num.innerText = day;
-    di.appendChild(num);
+    dayBody.appendChild(num);
+
+    const dayFooter = document.createElement('div');
+    dayFooter.className = 'day-footer';
+
+    di.appendChild(dayHeader);
+    di.appendChild(dayBody);
+    di.appendChild(dayFooter);
     grid.appendChild(di);
   }
 
@@ -260,18 +297,34 @@ function renderMonthBlock(container, y, m) {
   container.appendChild(monthBlock);
 }
 
-// ─── Quick Month Selector Pills ───
-function renderQuickMonthSelector() {
-  const container = document.getElementById('quick-month-selector');
+// ─── Quick Month Navigation Grid (Left Sidebar) ───
+function renderQuickMonthGrid() {
+  const container = document.getElementById('quick-month-grid');
   if (!container) return;
   container.innerHTML = '';
 
   for (let m = 0; m < 12; m++) {
-    const pill = document.createElement('button');
-    pill.className = 'month-pill' + (m === viewM ? ' active' : '');
-    pill.innerText = `${m + 1}月`;
-    pill.onclick = () => selectMonth(m);
-    container.appendChild(pill);
+    let workdaysInMonth = 0;
+    const daysInM = new Date(2026, m + 1, 0).getDate();
+    for (let day = 1; day <= daysInM; day++) {
+      if (isWork(new Date(2026, m, day))) workdaysInMonth++;
+    }
+
+    const btn = document.createElement('div');
+    btn.className = 'quick-month-btn' + (m === viewM ? ' active' : '');
+    btn.onclick = () => selectMonth(m);
+
+    const name = document.createElement('div');
+    name.className = 'quick-month-name';
+    name.innerText = `${m + 1}月`;
+
+    const sub = document.createElement('div');
+    sub.className = 'quick-month-sub';
+    sub.innerText = `${workdaysInMonth}天`;
+
+    btn.appendChild(name);
+    btn.appendChild(sub);
+    container.appendChild(btn);
   }
 }
 
