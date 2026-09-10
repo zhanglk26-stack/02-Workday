@@ -8,182 +8,181 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=2" />
+    <link rel="stylesheet" href="style.css?v=4" />
   </head>
   <body>
-    <div class="app-shell">
+    <div class="app-container">
 
-      <!-- ── Sidebar ── -->
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo" onclick="toggleSidebar()" title="收起/展开">
-          <i class="ph-fill ph-calendar-check"></i>
-          <span class="sidebar-logo-text">工作日看板</span>
+      <!-- Top Header / Bar -->
+      <header class="app-header">
+        <div class="header-left">
+          <div class="brand-badge">
+            <i class="ph-fill ph-calendar-check"></i>
+            <span class="brand-title">工作日看板</span>
+            <span class="brand-year">2026</span>
+          </div>
         </div>
 
-        <nav class="sidebar-nav">
-          <div class="nav-item active" id="nav-calendar" onclick="switchPage('calendar')">
-            <i class="ph ph-calendar-dots"></i>
-            <span class="nav-item-label">日历</span>
+        <div class="header-center">
+          <!-- View Switcher Tabs -->
+          <div class="view-tabs">
+            <button class="tab-btn active" id="tab-single" onclick="setViewMode('single')">
+              <i class="ph ph-calendar-blank"></i>
+              <span>单月</span>
+            </button>
+            <button class="tab-btn" id="tab-dual" onclick="setViewMode('dual')">
+              <i class="ph ph-squares-four"></i>
+              <span>双月连看</span>
+            </button>
+            <button class="tab-btn" id="tab-year" onclick="setViewMode('year')">
+              <i class="ph ph-grid-nine"></i>
+              <span>全年图谱</span>
+            </button>
           </div>
-          <div class="nav-item" id="nav-memo" onclick="switchPage('memo')">
-            <i class="ph ph-note-pencil"></i>
-            <span class="nav-item-label">备忘录</span>
-          </div>
-        </nav>
+        </div>
 
-        <div class="sidebar-bottom">
-          <div class="nav-item" onclick="toggleTheme()" title="切换主题">
+        <div class="header-right">
+          <button class="btn-today" onclick="goToday()" title="回到今天">
+            <i class="ph ph-target"></i>
+            <span>回到今天</span>
+          </button>
+          <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="切换主题">
             <i id="theme-icon" class="ph ph-sun"></i>
-            <span class="nav-item-label">主题</span>
-          </div>
+          </button>
         </div>
-      </aside>
+      </header>
 
-      <!-- ── Main Content ── -->
-      <main class="main-content">
+      <!-- Sub Bar: Navigation Control (Month Nav) -->
+      <div class="nav-control-bar" id="nav-control-bar">
+        <div class="month-nav-group">
+          <button class="btn-circle" onclick="changeMonth(-1)" title="上个月">
+            <i class="ph ph-caret-left"></i>
+          </button>
+          <div class="current-month-display" id="month-display-text">2026年 1月</div>
+          <button class="btn-circle" onclick="changeMonth(1)" title="下个月">
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+        <div class="quick-month-selector" id="quick-month-selector">
+          <!-- JS will populate 12 month buttons -->
+        </div>
+      </div>
 
-        <!-- PAGE: Calendar -->
-        <div class="page active" id="page-calendar">
-          <div class="cal-page-wrapper">
-            <div class="dashboard-grid">
-              <section class="card">
-                <div class="cal-header">
-                  <span id="cal-lbl-text">2026年 1月</span>
-                  <div class="cal-nav">
-                    <button onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
-                    <button onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
-                  </div>
+      <!-- Main Bento Grid Content -->
+      <main class="bento-container" id="bento-container">
+
+        <!-- Left / Primary Area: Main Calendar Card -->
+        <section class="bento-card bento-cal-card" id="bento-cal-card">
+          <div class="cal-wrapper" id="cal-wrapper">
+            <!-- Dynamically populated 1 or 2 calendar grids -->
+          </div>
+        </section>
+
+        <!-- Right / Secondary Area: Stats & Detail Sidebar Bento Cards -->
+        <aside class="bento-sidebar">
+
+          <!-- Selected Date Detail Card -->
+          <div class="bento-card date-detail-card" id="date-detail-card">
+            <div class="detail-header">
+              <span class="detail-tag" id="detail-tag">今日详情</span>
+              <span class="detail-work-badge" id="detail-work-badge">工作日</span>
+            </div>
+            <div class="detail-body">
+              <div class="detail-day-num" id="detail-day-num">23</div>
+              <div class="detail-date-full" id="detail-date-full">2026年 3月 23日 星期一</div>
+              <div class="detail-pills">
+                <div class="pill-item">
+                  <i class="ph ph-briefcase"></i>
+                  <span id="detail-w-index">本月第 15 个工作日</span>
                 </div>
-                <div class="cal-grid" id="cal-grid"></div>
-              </section>
-
-              <div class="stats-container">
-                <section class="card">
-                  <div class="section-title"><i class="ph-fill ph-chart-line-up"></i> 工作进度</div>
-
-                  <div class="progress-item">
-                    <div class="progress-label">
-                      <span>本月进度</span>
-                      <span id="m-prog-txt">0%</span>
-                    </div>
-                    <div class="progress-bar"><div id="m-prog-bar" class="progress-fill"></div></div>
-                    <div class="summary-text" id="m-summary">已工作 0 天，剩余 0 天</div>
-                  </div>
-
-                  <div class="progress-item">
-                    <div class="progress-label">
-                      <span>年度完成</span>
-                      <span id="y-prog-txt" style="color: var(--success)">0%</span>
-                    </div>
-                    <div class="progress-bar"><div id="y-prog-bar" class="progress-fill success"></div></div>
-                    <div class="summary-text" id="y-summary">2026年已过去 0 天</div>
-                  </div>
-
-                  <div class="counter-grid">
-                    <div class="counter-item">
-                      <span class="label">假期已过</span>
-                      <span class="val" id="h-pass">0</span>
-                    </div>
-                    <div class="counter-item">
-                      <span class="label">假期余额</span>
-                      <span class="val" style="color: var(--success)" id="h-rem">0</span>
-                    </div>
-                  </div>
-                </section>
-
-                <section class="card">
-                  <div class="section-title"><i class="ph-fill ph-confetti"></i> 未来假期</div>
-                  <div id="holiday-list"></div>
-                </section>
+                <div class="pill-item">
+                  <i class="ph ph-hourglass-high"></i>
+                  <span id="detail-year-day">当年第 82 天</span>
+                </div>
+              </div>
+              <div class="detail-holiday-info" id="detail-holiday-info">
+                <!-- Holiday status or countdown to next holiday -->
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- PAGE: Memo -->
-        <div class="page" id="page-memo">
-          <div class="memo-page-wrapper">
-
-            <!-- Left: 3-column memo view -->
-            <div class="memo-left-container">
-              <div class="memo-nav-top">
-                <button class="memo-date-btn" onclick="shiftMemoDate(-1)" title="上一天"><i class="ph ph-caret-left"></i></button>
-                <button class="memo-today-btn" onclick="goMemoToday()">回到今天</button>
-                <button class="memo-date-btn" onclick="shiftMemoDate(1)" title="下一天"><i class="ph ph-caret-right"></i></button>
-                <div class="memo-save-status" id="memo-save-status"></div>
-              </div>
-
-              <div class="memo-cols-wrap">
-                <!-- Yesterday -->
-                <div class="memo-col prev-day">
-                  <div class="memo-col-header">
-                    <span class="memo-col-title" id="memo-title-prev">昨天</span>
-                    <span class="memo-col-sub" id="memo-sub-prev">日期</span>
-                  </div>
-                  <textarea class="memo-textarea" id="memo-textarea-prev" placeholder="昨天的记录..."></textarea>
-                </div>
-
-                <!-- Today -->
-                <div class="memo-col curr-day">
-                  <div class="memo-col-header">
-                    <span class="memo-col-title" id="memo-title-curr">今天</span>
-                    <span class="memo-col-sub" id="memo-sub-curr">日期</span>
-                  </div>
-                  <textarea class="memo-textarea" id="memo-textarea-curr" placeholder="写点什么... 支持换行，自动保存"></textarea>
-                </div>
-
-                <!-- Tomorrow -->
-                <div class="memo-col next-day">
-                  <div class="memo-col-header">
-                    <span class="memo-col-title" id="memo-title-next">明天</span>
-                    <span class="memo-col-sub" id="memo-sub-next">日期</span>
-                  </div>
-                  <textarea class="memo-textarea" id="memo-textarea-next" placeholder="明天的规划..."></textarea>
-                </div>
-              </div>
+          <!-- Progress Bento Card -->
+          <div class="bento-card progress-card">
+            <div class="card-title">
+              <i class="ph-fill ph-chart-line-up"></i>
+              <span>工作进度</span>
             </div>
 
-            <!-- Right: mini cal + todo -->
-            <div class="memo-right">
-              <!-- Mini Calendar -->
-              <div class="mini-cal-wrap">
-                <div class="mini-cal-header">
-                  <span class="mini-cal-lbl" id="mini-cal-lbl">3月</span>
-                  <div class="mini-cal-nav">
-                    <button onclick="changeMiniMonth(-1)"><i class="ph ph-caret-left"></i></button>
-                    <button onclick="changeMiniMonth(1)"><i class="ph ph-caret-right"></i></button>
-                  </div>
-                </div>
-                <div class="mini-cal-grid" id="mini-cal-grid"></div>
+            <!-- Month Progress -->
+            <div class="prog-group">
+              <div class="prog-meta">
+                <span class="prog-label">当月进度</span>
+                <span class="prog-val" id="m-prog-txt">0%</span>
               </div>
-
-              <!-- TODO List -->
-              <div class="todo-wrap">
-                <div class="todo-header">
-                  <i class="ph-fill ph-check-square"></i>
-                  <span>TODO</span>
-                </div>
-                <div class="todo-input-row">
-                  <input
-                    class="todo-input"
-                    id="todo-input"
-                    type="text"
-                    placeholder="新增待办..."
-                    onkeydown="if(event.key==='Enter') addTodo()"
-                  />
-                  <button class="todo-add-btn" onclick="addTodo()"><i class="ph ph-plus"></i></button>
-                </div>
-                <div class="todo-list" id="todo-list"></div>
+              <div class="prog-track">
+                <div class="prog-fill" id="m-prog-bar" style="width: 0%"></div>
               </div>
+              <div class="prog-sub" id="m-summary">已工作 0 天，剩余 0 天</div>
             </div>
 
+            <!-- Year Progress -->
+            <div class="prog-group">
+              <div class="prog-meta">
+                <span class="prog-label">年度完成</span>
+                <span class="prog-val accent-success" id="y-prog-txt">0%</span>
+              </div>
+              <div class="prog-track">
+                <div class="prog-fill fill-success" id="y-prog-bar" style="width: 0%"></div>
+              </div>
+              <div class="prog-sub" id="y-summary">2026年已过去 0 天</div>
+            </div>
+
+            <!-- Counters -->
+            <div class="counter-row">
+              <div class="counter-box">
+                <span class="counter-num" id="h-pass">0</span>
+                <span class="counter-lbl">已休法定假</span>
+              </div>
+              <div class="counter-box highlight">
+                <span class="counter-num accent-success" id="h-rem">0</span>
+                <span class="counter-lbl">剩余法定假</span>
+              </div>
+            </div>
           </div>
-        </div>
 
+          <!-- Upcoming Holidays Bento Card -->
+          <div class="bento-card holidays-card">
+            <div class="card-title">
+              <i class="ph-fill ph-sparkle"></i>
+              <span>假期倒计时</span>
+            </div>
+            <div class="holiday-list" id="holiday-list">
+              <!-- Dynamically populated holiday countdown cards -->
+            </div>
+          </div>
+
+        </aside>
       </main>
+
+      <!-- Year Overview View Container (Hidden when not in 'year' view) -->
+      <section class="year-view-container" id="year-view-container" style="display: none;">
+        <div class="year-header">
+          <div class="year-title">2026 年法定节假日与工作日图谱</div>
+          <div class="year-legend">
+            <span class="legend-item"><span class="dot dot-work"></span>工作日</span>
+            <span class="legend-item"><span class="dot dot-rest"></span>周末</span>
+            <span class="legend-item"><span class="dot dot-holiday"></span>法定节假日</span>
+            <span class="legend-item"><span class="dot dot-makeup"></span>调休上班</span>
+          </div>
+        </div>
+        <div class="year-grid" id="year-grid">
+          <!-- JS will populate 12 mini month calendars -->
+        </div>
+      </section>
+
     </div>
 
-    <script src="workday.js?v=2"></script>
-    <script src="app.js?v=2"></script>
+    <script src="workday.js?v=4"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>
