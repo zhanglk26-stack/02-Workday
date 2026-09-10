@@ -8,18 +8,34 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=3" />
+    <link rel="stylesheet" href="style.css?v=4" />
   </head>
   <body>
     <div class="app-container">
 
-      <!-- Top Header / Bar -->
+      <!-- Top Header / Bar (Unified Navigation & View Switches) -->
       <header class="app-header">
         <div class="header-left">
           <div class="brand-badge">
             <i class="ph-fill ph-calendar-check"></i>
             <span class="brand-title">工作日看板</span>
             <span class="brand-year">2026</span>
+          </div>
+
+          <!-- Month Navigation & Quick Selector integrated into Header -->
+          <div class="header-month-nav" id="header-month-nav">
+            <div class="month-nav-group">
+              <button class="btn-circle" onclick="changeMonth(-1)" title="上个月">
+                <i class="ph ph-caret-left"></i>
+              </button>
+              <div class="current-month-display" id="month-display-text">2026年 1月</div>
+              <button class="btn-circle" onclick="changeMonth(1)" title="下个月">
+                <i class="ph ph-caret-right"></i>
+              </button>
+            </div>
+            <div class="quick-month-selector" id="quick-month-selector">
+              <!-- JS will populate 12 month buttons -->
+            </div>
           </div>
         </div>
 
@@ -52,37 +68,12 @@
         </div>
       </header>
 
-      <!-- Sub Bar: Navigation Control (Month Nav) -->
-      <div class="nav-control-bar" id="nav-control-bar">
-        <div class="month-nav-group">
-          <button class="btn-circle" onclick="changeMonth(-1)" title="上个月">
-            <i class="ph ph-caret-left"></i>
-          </button>
-          <div class="current-month-display" id="month-display-text">2026年 1月</div>
-          <button class="btn-circle" onclick="changeMonth(1)" title="下个月">
-            <i class="ph ph-caret-right"></i>
-          </button>
-        </div>
-        <div class="quick-month-selector" id="quick-month-selector">
-          <!-- JS will populate 12 month buttons -->
-        </div>
-      </div>
+      <!-- Main Dashboard Grid Content -->
+      <main class="dashboard-container" id="dashboard-container">
 
-      <!-- Main Bento Grid Content -->
-      <main class="bento-container" id="bento-container">
-
-        <!-- Left / Primary Area: Main Calendar Card -->
-        <section class="bento-card bento-cal-card" id="bento-cal-card">
-          <div class="cal-wrapper" id="cal-wrapper">
-            <!-- Dynamically populated 1 or 2 calendar grids -->
-          </div>
-        </section>
-
-        <!-- Right / Secondary Area: Stats & Detail Sidebar Bento Cards -->
-        <aside class="bento-sidebar">
-
-          <!-- Selected Date Detail Card -->
-          <div class="bento-card date-detail-card" id="date-detail-card">
+        <!-- Left Sidebar: Selected Date Detail Inspection Card -->
+        <aside class="dash-left-sidebar">
+          <div class="dash-card date-detail-card" id="date-detail-card">
             <div class="detail-header">
               <span class="detail-tag" id="detail-tag">今日详情</span>
               <span class="detail-work-badge" id="detail-work-badge">工作日</span>
@@ -106,8 +97,30 @@
             </div>
           </div>
 
-          <!-- Progress Bento Card -->
-          <div class="bento-card progress-card">
+          <!-- Quick Month Jump Card -->
+          <div class="dash-card quick-nav-card">
+            <div class="card-title">
+              <i class="ph ph-compass"></i>
+              <span>快速导航</span>
+            </div>
+            <div class="quick-month-grid" id="quick-month-grid">
+              <!-- JS will populate month grid items -->
+            </div>
+          </div>
+        </aside>
+
+        <!-- Center Area: Main Calendar Card -->
+        <section class="dash-card dash-main-cal" id="dash-main-cal">
+          <div class="cal-wrapper" id="cal-wrapper">
+            <!-- Dynamically populated 1 or 2 calendar grids -->
+          </div>
+        </section>
+
+        <!-- Right Sidebar: Stats & Holidays Cards -->
+        <aside class="dash-right-sidebar">
+
+          <!-- Progress Card -->
+          <div class="dash-card progress-card">
             <div class="card-title">
               <i class="ph-fill ph-chart-line-up"></i>
               <span>工作进度</span>
@@ -150,8 +163,8 @@
             </div>
           </div>
 
-          <!-- Upcoming Holidays Bento Card -->
-          <div class="bento-card holidays-card">
+          <!-- Upcoming Holidays Card -->
+          <div class="dash-card holidays-card">
             <div class="card-title">
               <i class="ph-fill ph-sparkle"></i>
               <span>假期倒计时</span>
@@ -182,7 +195,7 @@
 
     </div>
 
-    <script src="workday.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="workday.js?v=4"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>

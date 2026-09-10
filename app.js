@@ -44,19 +44,19 @@ function setViewMode(mode) {
   const activeTab = document.getElementById('tab-' + mode);
   if (activeTab) activeTab.classList.add('active');
 
-  const bentoContainer = document.getElementById('bento-container');
+  const dashContainer = document.getElementById('dashboard-container');
   const yearContainer = document.getElementById('year-view-container');
-  const navControlBar = document.getElementById('nav-control-bar');
+  const monthNav = document.getElementById('header-month-nav');
 
   if (mode === 'year') {
-    bentoContainer.style.display = 'none';
+    dashContainer.style.display = 'none';
     yearContainer.style.display = 'block';
-    if (navControlBar) navControlBar.style.display = 'none';
+    if (monthNav) monthNav.style.display = 'none';
     renderYearView();
   } else {
-    bentoContainer.style.display = 'grid';
+    dashContainer.style.display = 'grid';
     yearContainer.style.display = 'none';
-    if (navControlBar) navControlBar.style.display = 'flex';
+    if (monthNav) monthNav.style.display = 'flex';
     renderCalendar();
   }
 }
@@ -110,6 +110,7 @@ function renderCalendar() {
   }
 
   renderQuickMonthSelector();
+  renderQuickMonthGrid();
   calc();
   updateHolidays();
   renderDateDetail(selectedDate);
@@ -179,6 +180,7 @@ function renderMonthBlock(container, y, m) {
     const di = document.createElement('div');
     di.className = 'cal-day';
 
+    // Option A: Highlight W6 and W15
     if (work && (wCnt === 6 || wCnt === 15)) {
       di.classList.add(wCnt === 6 ? 'day-w6' : 'day-w15');
     }
@@ -260,7 +262,7 @@ function renderMonthBlock(container, y, m) {
   container.appendChild(monthBlock);
 }
 
-// ─── Quick Month Selector Pills ───
+// ─── Quick Month Selector Pills (Header) ───
 function renderQuickMonthSelector() {
   const container = document.getElementById('quick-month-selector');
   if (!container) return;
@@ -272,6 +274,37 @@ function renderQuickMonthSelector() {
     pill.innerText = `${m + 1}月`;
     pill.onclick = () => selectMonth(m);
     container.appendChild(pill);
+  }
+}
+
+// ─── Quick Month Navigation Grid (Left Sidebar) ───
+function renderQuickMonthGrid() {
+  const container = document.getElementById('quick-month-grid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  for (let m = 0; m < 12; m++) {
+    let workdaysInMonth = 0;
+    const daysInM = new Date(2026, m + 1, 0).getDate();
+    for (let day = 1; day <= daysInM; day++) {
+      if (isWork(new Date(2026, m, day))) workdaysInMonth++;
+    }
+
+    const btn = document.createElement('div');
+    btn.className = 'quick-month-btn' + (m === viewM ? ' active' : '');
+    btn.onclick = () => selectMonth(m);
+
+    const name = document.createElement('div');
+    name.className = 'quick-month-name';
+    name.innerText = `${m + 1}月`;
+
+    const sub = document.createElement('div');
+    sub.className = 'quick-month-sub';
+    sub.innerText = `${workdaysInMonth}天`;
+
+    btn.appendChild(name);
+    btn.appendChild(sub);
+    container.appendChild(btn);
   }
 }
 
