@@ -7,7 +7,7 @@ let viewMode = 'single'; // 'single' | 'dual' | 'year'
 let selectedDate = new Date(t);
 
 const WD_NAMES = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-const WD_NAMES_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
+const WD_NAMES_SHORT = ['一', '二', '三', '四', '五', '六', '日'];
 
 // ─── Utilities ───
 function dateLabel(d) {
@@ -150,12 +150,12 @@ function renderMonthBlock(container, y, m) {
   // Weekday Headers
   WD_NAMES_SHORT.forEach((txt, idx) => {
     const di = document.createElement('div');
-    di.className = 'cal-weekday' + (idx === 0 || idx === 6 ? ' weekend' : '');
+    di.className = 'cal-weekday' + (idx >= 5 ? ' weekend' : '');
     di.innerText = txt;
     grid.appendChild(di);
   });
 
-  const firstD = new Date(y, m, 1).getDay();
+  const firstD = (new Date(y, m, 1).getDay() + 6) % 7;
   const prevMDays = new Date(y, m, 0).getDate();
   const todayStr = fmt(t);
   const selectedStr = fmt(selectedDate);
@@ -439,7 +439,7 @@ function renderYearView() {
       miniGrid.appendChild(lbl);
     });
 
-    const firstD = new Date(2026, m, 1).getDay();
+    const firstD = (new Date(2026, m, 1).getDay() + 6) % 7;
     const daysInM = new Date(2026, m + 1, 0).getDate();
     const prevMDays = new Date(2026, m, 0).getDate();
 
