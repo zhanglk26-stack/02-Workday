@@ -1,7 +1,9 @@
 // ─── Core State ───
 const sysT = new Date();
-const t = sysT.getFullYear() === 2027 ? sysT : new Date(2027, 2, 23); // Default reference: March 23, 2027
+// Reference date: current system time if in supported range (2026-2027), otherwise 2026-11-06
+const t = (sysT.getFullYear() >= 2026 && sysT.getFullYear() <= 2027) ? sysT : new Date(2026, 10, 6);
 
+let viewY = t.getFullYear();
 let viewM = t.getMonth();
 let viewMode = 'single'; // 'single' | 'dual' | 'year'
 let selectedDate = new Date(t);
@@ -11,6 +13,7 @@ const WD_NAMES_SHORT = ['一', '二', '三', '四', '五', '六', '日'];
 
 // ─── Utilities ───
 function dateLabel(d) {
+  if (!d || !(d instanceof Date) || isNaN(d.getTime())) return "";
   const m = d.getMonth() + 1;
   const day = d.getDate();
   return `${d.getFullYear()}年${m}月${day}日`;
@@ -61,20 +64,27 @@ function setViewMode(mode) {
   }
 }
 
-// ─── Month Navigation ───
+// ─── Smooth Perpetual Month Navigation ───
 function changeMonth(delta) {
   viewM += delta;
-  if (viewM > 11) viewM = 0;
-  else if (viewM < 0) viewM = 11;
+  if (viewM > 11) {
+    viewY += Math.floor(viewM / 12);
+    viewM = ((viewM % 12) + 12) % 12;
+  } else if (viewM < 0) {
+    viewY += Math.floor(viewM / 12);
+    viewM = ((viewM % 12) + 12) % 12;
+  }
   renderCalendar();
 }
 
-function selectMonth(m) {
+function selectMonth(y, m) {
+  viewY = y;
   viewM = m;
   renderCalendar();
 }
 
 function goToday() {
+  viewY = t.getFullYear();
   viewM = t.getMonth();
   selectedDate = new Date(t);
   if (viewMode === 'year') {
@@ -95,18 +105,26 @@ function renderCalendar() {
 
   const monthDisplayText = document.getElementById('month-display-text');
   if (viewMode === 'dual') {
-    const nextM = (viewM + 1) % 12;
-    const year2 = viewM === 11 ? 2028 : 2027;
-    if (monthDisplayText) {
-      monthDisplayText.innerText = `${2027}年 ${viewM + 1}月 - ${nextM + 1}月`;
+    let nextY = viewY;
+    let nextM = viewM + 1;
+    if (nextM > 11) {
+      nextY++;
+      nextM = 0;
     }
-    renderMonthBlock(wrapper, 2027, viewM);
-    renderMonthBlock(wrapper, year2, nextM);
+    if (monthDisplayText) {
+      if (viewY === nextY) {
+        monthDisplayText.innerText = `${viewY}年 ${viewM + 1}月 - ${nextM + 1}月`;
+      } else {
+        monthDisplayText.innerText = `${viewY}年${viewM + 1}月 - ${nextY}年${nextM + 1}月`;
+      }
+    }
+    renderMonthBlock(wrapper, viewY, viewM);
+    renderMonthBlock(wrapper, nextY, nextM);
   } else {
     if (monthDisplayText) {
-      monthDisplayText.innerText = `${2027}年 ${viewM + 1}月`;
+      monthDisplayText.innerText = `${viewY}年 ${viewM + 1}月`;
     }
-    renderMonthBlock(wrapper, 2027, viewM);
+    renderMonthBlock(wrapper, viewY, viewM);
   }
 
   renderQuickMonthGrid();
@@ -147,7 +165,7 @@ function renderMonthBlock(container, y, m) {
   const grid = document.createElement('div');
   grid.className = 'cal-grid';
 
-  // Weekday Headers
+  // Weekday Headers (Monday to Sunday)
   WD_NAMES_SHORT.forEach((txt, idx) => {
     const di = document.createElement('div');
     di.className = 'cal-weekday' + (idx >= 5 ? ' weekend' : '');
@@ -189,7 +207,7 @@ function renderMonthBlock(container, y, m) {
   for (let day = 1; day <= daysInM; day++) {
     const date = new Date(y, m, day);
     const str = fmt(date);
-    const work = isWork(date);
+    const work = isWork(date, str);
     const holidayName = DATA.h[str];
     const isMakeup = DATA.w.has(str);
 
@@ -297,35 +315,54 @@ function renderMonthBlock(container, y, m) {
   container.appendChild(monthBlock);
 }
 
-// ─── Quick Month Navigation Grid (Left Sidebar) ───
+// ─── Quick Month Navigation Grid (Left Sidebar - 2 Years Continuous) ───
 function renderQuickMonthGrid() {
   const container = document.getElementById('quick-month-grid');
   if (!container) return;
   container.innerHTML = '';
 
-  for (let m = 0; m < 12; m++) {
-    let workdaysInMonth = 0;
-    const daysInM = new Date(2027, m + 1, 0).getDate();
-    for (let day = 1; day <= daysInM; day++) {
-      if (isWork(new Date(2027, m, day))) workdaysInMonth++;
+  const years = [2026, 2027];
+
+  years.forEach(year => {
+    const group = document.createElement('div');
+    group.className = 'quick-year-group';
+
+    const groupHeader = document.createElement('div');
+    groupHeader.className = 'quick-year-header' + (year === viewY ? ' current-year' : '');
+    groupHeader.innerText = `${year} 年`;
+    group.appendChild(groupHeader);
+
+    const monthGrid = document.createElement('div');
+    monthGrid.className = 'quick-year-months';
+
+    for (let m = 0; m < 12; m++) {
+      let workdaysInMonth = 0;
+      const daysInM = new Date(year, m + 1, 0).getDate();
+      for (let day = 1; day <= daysInM; day++) {
+        if (isWork(new Date(year, m, day))) workdaysInMonth++;
+      }
+
+      const isCurrentViewing = (year === viewY && m === viewM);
+      const btn = document.createElement('div');
+      btn.className = 'quick-month-btn' + (isCurrentViewing ? ' active' : '');
+      btn.onclick = () => selectMonth(year, m);
+
+      const name = document.createElement('div');
+      name.className = 'quick-month-name';
+      name.innerText = `${m + 1}月`;
+
+      const sub = document.createElement('div');
+      sub.className = 'quick-month-sub';
+      sub.innerText = `${workdaysInMonth}天`;
+
+      btn.appendChild(name);
+      btn.appendChild(sub);
+      monthGrid.appendChild(btn);
     }
 
-    const btn = document.createElement('div');
-    btn.className = 'quick-month-btn' + (m === viewM ? ' active' : '');
-    btn.onclick = () => selectMonth(m);
-
-    const name = document.createElement('div');
-    name.className = 'quick-month-name';
-    name.innerText = `${m + 1}月`;
-
-    const sub = document.createElement('div');
-    sub.className = 'quick-month-sub';
-    sub.innerText = `${workdaysInMonth}天`;
-
-    btn.appendChild(name);
-    btn.appendChild(sub);
-    container.appendChild(btn);
-  }
+    group.appendChild(monthGrid);
+    container.appendChild(group);
+  });
 }
 
 // ─── Date Detail Inspection Panel ───
@@ -334,7 +371,7 @@ function renderDateDetail(d) {
 
   const dateStr = fmt(d);
   const isToday = dateStr === fmt(t);
-  const work = isWork(d);
+  const work = isWork(d, dateStr);
   const holidayName = DATA.h[dateStr];
   const isMakeup = DATA.w.has(dateStr);
 
@@ -368,8 +405,8 @@ function renderDateDetail(d) {
   }
 
   // Workday index calculation
-  let wIndex = 0;
   if (work) {
+    let wIndex = 0;
     for (let day = 1; day <= d.getDate(); day++) {
       if (isWork(new Date(d.getFullYear(), d.getMonth(), day))) wIndex++;
     }
@@ -408,88 +445,108 @@ function renderDateDetail(d) {
         }
         holidayInfoEl.innerHTML = `<i class="ph-fill ph-hourglass"></i> 距【${nextHName}】还需工作 ${workdaysLeft} 天`;
       } else {
-        holidayInfoEl.innerHTML = `<i class="ph-fill ph-sparkle"></i> 2027年所有法定节假日已过完`;
+        holidayInfoEl.innerHTML = `<i class="ph-fill ph-sparkle"></i> 法定节假日已全部过完`;
       }
     }
   }
 }
 
-// ─── Year Overview View ───
+// ─── Year Overview View (Continuous 2026 & 2027) ───
 function renderYearView() {
   const container = document.getElementById('year-grid');
   if (!container) return;
   container.innerHTML = '';
 
-  for (let m = 0; m < 12; m++) {
-    const monthCard = document.createElement('div');
-    monthCard.className = 'year-mini-month';
+  const years = [2026, 2027];
 
-    const title = document.createElement('div');
-    title.className = 'year-mini-title';
-    title.innerText = `${m + 1}月`;
-    monthCard.appendChild(title);
+  years.forEach(year => {
+    const yearSection = document.createElement('div');
+    yearSection.className = 'year-overview-section';
 
-    const miniGrid = document.createElement('div');
-    miniGrid.className = 'year-mini-grid';
+    const sectionTitle = document.createElement('div');
+    sectionTitle.className = 'year-overview-title';
+    sectionTitle.innerText = `${year} 年图谱`;
+    yearSection.appendChild(sectionTitle);
 
-    WD_NAMES_SHORT.forEach(txt => {
-      const lbl = document.createElement('div');
-      lbl.className = 'mini-day-lbl';
-      lbl.innerText = txt;
-      miniGrid.appendChild(lbl);
-    });
+    const grid = document.createElement('div');
+    grid.className = 'year-overview-grid';
 
-    const firstD = (new Date(2027, m, 1).getDay() + 6) % 7;
-    const daysInM = new Date(2027, m + 1, 0).getDate();
-    const prevMDays = new Date(2027, m, 0).getDate();
+    for (let m = 0; m < 12; m++) {
+      const monthCard = document.createElement('div');
+      monthCard.className = 'year-mini-month';
 
-    for (let i = firstD - 1; i >= 0; i--) {
-      const box = document.createElement('div');
-      box.className = 'mini-day-box muted';
-      box.innerText = prevMDays - i;
-      miniGrid.appendChild(box);
+      const title = document.createElement('div');
+      title.className = 'year-mini-title';
+      title.innerText = `${m + 1}月`;
+      monthCard.appendChild(title);
+
+      const miniGrid = document.createElement('div');
+      miniGrid.className = 'year-mini-grid';
+
+      WD_NAMES_SHORT.forEach(txt => {
+        const lbl = document.createElement('div');
+        lbl.className = 'mini-day-lbl';
+        lbl.innerText = txt;
+        miniGrid.appendChild(lbl);
+      });
+
+      const firstD = (new Date(year, m, 1).getDay() + 6) % 7;
+      const daysInM = new Date(year, m + 1, 0).getDate();
+      const prevMDays = new Date(year, m, 0).getDate();
+
+      for (let i = firstD - 1; i >= 0; i--) {
+        const box = document.createElement('div');
+        box.className = 'mini-day-box muted';
+        box.innerText = prevMDays - i;
+        miniGrid.appendChild(box);
+      }
+
+      const todayStr = fmt(t);
+      for (let day = 1; day <= daysInM; day++) {
+        const date = new Date(year, m, day);
+        const str = fmt(date);
+        const isHoliday = DATA.h[str];
+        const isMakeup = DATA.w.has(str);
+
+        const box = document.createElement('div');
+        box.className = 'mini-day-box';
+        box.innerText = day;
+
+        if (isHoliday) box.classList.add('m-holiday');
+        else if (isMakeup) box.classList.add('m-makeup');
+        if (str === todayStr) box.classList.add('m-today');
+
+        box.onclick = () => {
+          viewY = year;
+          viewM = m;
+          selectedDate = date;
+          setViewMode('single');
+        };
+
+        miniGrid.appendChild(box);
+      }
+
+      monthCard.appendChild(miniGrid);
+      grid.appendChild(monthCard);
     }
 
-    const todayStr = fmt(t);
-    for (let day = 1; day <= daysInM; day++) {
-      const date = new Date(2027, m, day);
-      const str = fmt(date);
-      const isHoliday = DATA.h[str];
-      const isMakeup = DATA.w.has(str);
-
-      const box = document.createElement('div');
-      box.className = 'mini-day-box';
-      box.innerText = day;
-
-      if (isHoliday) box.classList.add('m-holiday');
-      else if (isMakeup) box.classList.add('m-makeup');
-      if (str === todayStr) box.classList.add('m-today');
-
-      box.onclick = () => {
-        viewM = m;
-        selectedDate = date;
-        setViewMode('single');
-      };
-
-      miniGrid.appendChild(box);
-    }
-
-    monthCard.appendChild(miniGrid);
-    container.appendChild(monthCard);
-  }
+    yearSection.appendChild(grid);
+    container.appendChild(yearSection);
+  });
 }
 
 // ─── Dashboard Progress Calculations ───
 function calc() {
   let yp = 0, yt = 0, mp = 0, mt = 0, hp = 0, hr = 0;
-  const s = new Date(2027, 0, 1), e = new Date(2027, 11, 31);
+  const currentCalcYear = viewY;
+  const s = new Date(currentCalcYear, 0, 1), e = new Date(currentCalcYear, 11, 31);
 
   for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
     const w = isWork(d);
     if (w) {
       yt++;
       if (d <= t) yp++;
-      if (d.getMonth() === t.getMonth()) {
+      if (d.getMonth() === viewM) {
         mt++;
         if (d <= t) mp++;
       }
@@ -501,7 +558,7 @@ function calc() {
     }
   }
 
-  const yPct = ((yp / yt) * 100).toFixed(1);
+  const yPct = yt > 0 ? ((yp / yt) * 100).toFixed(1) : 0;
   const mPct = mt > 0 ? ((mp / mt) * 100).toFixed(1) : 0;
 
   const mTxt = document.getElementById('m-prog-txt');
@@ -516,8 +573,17 @@ function calc() {
   const ySum = document.getElementById('y-summary');
   if (yTxt) yTxt.innerText = yPct + '%';
   if (yBar) yBar.style.width = yPct + '%';
-  const yDaysPast = Math.floor((t - new Date(2027, 0, 1)) / 86400000) + 1;
-  if (ySum) ySum.innerText = `2027年已过去 ${yDaysPast} 天`;
+
+  if (ySum) {
+    if (t.getFullYear() === currentCalcYear) {
+      const yDaysPast = Math.floor((t - new Date(currentCalcYear, 0, 1)) / 86400000) + 1;
+      ySum.innerText = `${currentCalcYear}年已过去 ${yDaysPast} 天`;
+    } else if (t.getFullYear() > currentCalcYear) {
+      ySum.innerText = `${currentCalcYear}年已全部结束`;
+    } else {
+      ySum.innerText = `${currentCalcYear}年尚未开始`;
+    }
+  }
 
   const hPass = document.getElementById('h-pass');
   const hRem = document.getElementById('h-rem');
@@ -571,8 +637,8 @@ function updateHolidays() {
 
     const dates = document.createElement('div');
     dates.className = 'h-dates';
-    const startStr = `${h.start.getMonth() + 1}月${h.start.getDate()}日`;
-    const endStr = `${h.end.getMonth() + 1}月${h.end.getDate()}日`;
+    const startStr = `${h.start.getFullYear() !== t.getFullYear() ? h.start.getFullYear() + '年' : ''}${h.start.getMonth() + 1}月${h.start.getDate()}日`;
+    const endStr = `${h.end.getFullYear() !== t.getFullYear() && h.end.getFullYear() !== h.start.getFullYear() ? h.end.getFullYear() + '年' : ''}${h.end.getMonth() + 1}月${h.end.getDate()}日`;
     dates.innerText = startStr === endStr ? startStr : `${startStr} - ${endStr}`;
 
     left.appendChild(name);
@@ -612,6 +678,8 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     sysT,
     t,
+    viewY: () => viewY,
+    setViewY: (y) => { viewY = y; },
     viewM: () => viewM,
     setViewM: (v) => { viewM = v; },
     viewMode: () => viewMode,
@@ -620,8 +688,12 @@ if (typeof module !== 'undefined' && module.exports) {
     setSelectedDate: (d) => { selectedDate = d; },
     dateLabel,
     changeMonth,
+    selectMonth,
     goToday,
     calc,
     updateHolidays,
+    renderCalendar,
+    renderYearView,
+    renderQuickMonthGrid,
   };
 }
