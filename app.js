@@ -1,6 +1,6 @@
 // ─── Core State ───
 const sysT = new Date();
-const t = sysT.getFullYear() === 2026 ? sysT : new Date(2026, 2, 23); // Default reference: March 23, 2026
+const t = sysT.getFullYear() === 2027 ? sysT : new Date(2027, 2, 23); // Default reference: March 23, 2027
 
 let viewM = t.getMonth();
 let viewMode = 'single'; // 'single' | 'dual' | 'year'
@@ -96,17 +96,17 @@ function renderCalendar() {
   const monthDisplayText = document.getElementById('month-display-text');
   if (viewMode === 'dual') {
     const nextM = (viewM + 1) % 12;
-    const year2 = viewM === 11 ? 2027 : 2026;
+    const year2 = viewM === 11 ? 2028 : 2027;
     if (monthDisplayText) {
-      monthDisplayText.innerText = `${2026}年 ${viewM + 1}月 - ${nextM + 1}月`;
+      monthDisplayText.innerText = `${2027}年 ${viewM + 1}月 - ${nextM + 1}月`;
     }
-    renderMonthBlock(wrapper, 2026, viewM);
+    renderMonthBlock(wrapper, 2027, viewM);
     renderMonthBlock(wrapper, year2, nextM);
   } else {
     if (monthDisplayText) {
-      monthDisplayText.innerText = `${2026}年 ${viewM + 1}月`;
+      monthDisplayText.innerText = `${2027}年 ${viewM + 1}月`;
     }
-    renderMonthBlock(wrapper, 2026, viewM);
+    renderMonthBlock(wrapper, 2027, viewM);
   }
 
   renderQuickMonthGrid();
@@ -305,9 +305,9 @@ function renderQuickMonthGrid() {
 
   for (let m = 0; m < 12; m++) {
     let workdaysInMonth = 0;
-    const daysInM = new Date(2026, m + 1, 0).getDate();
+    const daysInM = new Date(2027, m + 1, 0).getDate();
     for (let day = 1; day <= daysInM; day++) {
-      if (isWork(new Date(2026, m, day))) workdaysInMonth++;
+      if (isWork(new Date(2027, m, day))) workdaysInMonth++;
     }
 
     const btn = document.createElement('div');
@@ -408,7 +408,7 @@ function renderDateDetail(d) {
         }
         holidayInfoEl.innerHTML = `<i class="ph-fill ph-hourglass"></i> 距【${nextHName}】还需工作 ${workdaysLeft} 天`;
       } else {
-        holidayInfoEl.innerHTML = `<i class="ph-fill ph-sparkle"></i> 2026年所有法定节假日已过完`;
+        holidayInfoEl.innerHTML = `<i class="ph-fill ph-sparkle"></i> 2027年所有法定节假日已过完`;
       }
     }
   }
@@ -439,9 +439,9 @@ function renderYearView() {
       miniGrid.appendChild(lbl);
     });
 
-    const firstD = (new Date(2026, m, 1).getDay() + 6) % 7;
-    const daysInM = new Date(2026, m + 1, 0).getDate();
-    const prevMDays = new Date(2026, m, 0).getDate();
+    const firstD = (new Date(2027, m, 1).getDay() + 6) % 7;
+    const daysInM = new Date(2027, m + 1, 0).getDate();
+    const prevMDays = new Date(2027, m, 0).getDate();
 
     for (let i = firstD - 1; i >= 0; i--) {
       const box = document.createElement('div');
@@ -452,7 +452,7 @@ function renderYearView() {
 
     const todayStr = fmt(t);
     for (let day = 1; day <= daysInM; day++) {
-      const date = new Date(2026, m, day);
+      const date = new Date(2027, m, day);
       const str = fmt(date);
       const isHoliday = DATA.h[str];
       const isMakeup = DATA.w.has(str);
@@ -482,7 +482,7 @@ function renderYearView() {
 // ─── Dashboard Progress Calculations ───
 function calc() {
   let yp = 0, yt = 0, mp = 0, mt = 0, hp = 0, hr = 0;
-  const s = new Date(2026, 0, 1), e = new Date(2026, 11, 31);
+  const s = new Date(2027, 0, 1), e = new Date(2027, 11, 31);
 
   for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
     const w = isWork(d);
@@ -516,8 +516,8 @@ function calc() {
   const ySum = document.getElementById('y-summary');
   if (yTxt) yTxt.innerText = yPct + '%';
   if (yBar) yBar.style.width = yPct + '%';
-  const yDaysPast = Math.floor((t - new Date(2026, 0, 1)) / 86400000) + 1;
-  if (ySum) ySum.innerText = `2026年已过去 ${yDaysPast} 天`;
+  const yDaysPast = Math.floor((t - new Date(2027, 0, 1)) / 86400000) + 1;
+  if (ySum) ySum.innerText = `2027年已过去 ${yDaysPast} 天`;
 
   const hPass = document.getElementById('h-pass');
   const hRem = document.getElementById('h-rem');
