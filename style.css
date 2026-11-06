@@ -1,75 +1,145 @@
-/* ─── CSS Variables & Claude.com Aesthetics ─── */
+/* ─── CSS Variables & Multi-Color Harmonized Aesthetics ─── */
+/* Requested Color Palette:
+   1. #3F6F76 - Deep Teal (Primary brand, active states, key actions, today highlight)
+   2. #69B7CE - Sky Cyan (Secondary accent, month progress, subtle highlights, active badges)
+   3. #F4CE4B - Amber Gold (Makeup workday tags & tints, weekend accents)
+   4. #C65840 - Terracotta Red (Statutory holiday tags, countdown cards, holiday fills)
+   5. #62496F - Deep Plum (Milestones W6/W15, year progress, annual chart accents)
+*/
 :root {
-  --bg-primary: #fbf9f5;
+  /* Palette Foundations */
+  --c-teal: #3F6F76;
+  --c-teal-hover: #335b61;
+  --c-teal-light: rgba(63, 111, 118, 0.12);
+  --c-teal-subtle: rgba(63, 111, 118, 0.06);
+
+  --c-cyan: #69B7CE;
+  --c-cyan-hover: #54a5bd;
+  --c-cyan-light: rgba(105, 183, 206, 0.15);
+  --c-cyan-subtle: rgba(105, 183, 206, 0.08);
+
+  --c-gold: #F4CE4B;
+  --c-gold-hover: #e0bc39;
+  --c-gold-dark: #b89218;
+  --c-gold-light: rgba(244, 206, 75, 0.18);
+  --c-gold-subtle: rgba(244, 206, 75, 0.09);
+
+  --c-terracotta: #C65840;
+  --c-terracotta-hover: #b04933;
+  --c-terracotta-light: rgba(198, 88, 64, 0.13);
+  --c-terracotta-subtle: rgba(198, 88, 64, 0.06);
+
+  --c-plum: #62496F;
+  --c-plum-hover: #50395c;
+  --c-plum-light: rgba(98, 73, 111, 0.13);
+  --c-plum-subtle: rgba(98, 73, 111, 0.07);
+
+  /* Surface & Neutral Colors (Clean slate-tinted warm minimal) */
+  --bg-primary: #f6f8f9;
   --bg-card: #ffffff;
-  --bg-card-hover: #fcfbfa;
+  --bg-card-hover: #f9fbfb;
   --bg-card-solid: #ffffff;
-  --bg-subtle: #f3efec;
-  --bg-pill: #e8e3dc;
+  --bg-subtle: #eff3f4;
+  --bg-pill: #e3eaec;
 
-  --text-main: #2c2b29;
-  --text-muted: #73706b;
-  --text-sub: #514f4c;
+  --text-main: #243033;
+  --text-muted: #6f7f84;
+  --text-sub: #49585d;
 
-  --accent-primary: #da7756;
-  --accent-primary-hover: #c46445;
-  --accent-primary-light: rgba(218, 119, 86, 0.12);
-  --accent-w6-w15-bg: rgba(218, 119, 86, 0.10);
+  /* Semantic Color Aliases */
+  --accent-primary: var(--c-teal);
+  --accent-primary-hover: var(--c-teal-hover);
+  --accent-primary-light: var(--c-teal-light);
 
-  --success: #48825c;
-  --success-light: rgba(72, 130, 92, 0.12);
+  --accent-secondary: var(--c-cyan);
+  --accent-secondary-light: var(--c-cyan-light);
 
-  --warning: #d97706;
-  --warning-light: rgba(217, 119, 6, 0.12);
+  --accent-milestone: var(--c-plum);
+  --accent-milestone-light: var(--c-plum-light);
 
-  --danger: #c94a4a;
-  --danger-light: rgba(201, 74, 74, 0.12);
+  --holiday-color: var(--c-terracotta);
+  --holiday-light: var(--c-terracotta-light);
 
-  --border-color: #e5e0d8;
-  --border-color-strong: #d5cfc4;
+  --makeup-color: var(--c-gold);
+  --makeup-dark: var(--c-gold-dark);
+  --makeup-light: var(--c-gold-light);
+
+  --border-color: #e0e6e8;
+  --border-color-strong: #c8d3d6;
   --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 1px 3px rgba(36, 48, 51, 0.05);
+  --shadow-lg: 0 3px 10px rgba(36, 48, 51, 0.08);
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 4px;
 
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 
 [data-theme="dark"] {
-  --bg-primary: #181816;
-  --bg-card: #22211f;
-  --bg-card-hover: #292825;
-  --bg-card-solid: #22211f;
-  --bg-subtle: #2b2a27;
-  --bg-pill: #363431;
+  /* Dark Theme Palette Variations */
+  --c-teal: #4e8891;
+  --c-teal-hover: #5d9ba5;
+  --c-teal-light: rgba(78, 136, 145, 0.22);
+  --c-teal-subtle: rgba(78, 136, 145, 0.12);
 
-  --text-main: #ece8e1;
-  --text-muted: #9a968e;
-  --text-sub: #c2beb5;
+  --c-cyan: #7ec7dc;
+  --c-cyan-hover: #96d6e7;
+  --c-cyan-light: rgba(126, 199, 220, 0.22);
+  --c-cyan-subtle: rgba(126, 199, 220, 0.12);
 
-  --accent-primary: #e08264;
-  --accent-primary-hover: #e89276;
-  --accent-primary-light: rgba(224, 130, 100, 0.18);
-  --accent-w6-w15-bg: rgba(224, 130, 100, 0.15);
+  --c-gold: #f6d668;
+  --c-gold-hover: #fae188;
+  --c-gold-dark: #f6d668;
+  --c-gold-light: rgba(246, 214, 104, 0.22);
+  --c-gold-subtle: rgba(246, 214, 104, 0.12);
 
-  --success: #5da072;
-  --success-light: rgba(93, 160, 114, 0.18);
+  --c-terracotta: #d66b53;
+  --c-terracotta-hover: #e37e67;
+  --c-terracotta-light: rgba(214, 107, 83, 0.22);
+  --c-terracotta-subtle: rgba(214, 107, 83, 0.12);
 
-  --warning: #f59e0b;
-  --warning-light: rgba(245, 158, 11, 0.18);
+  --c-plum: #7d608d;
+  --c-plum-hover: #9172a1;
+  --c-plum-light: rgba(125, 96, 141, 0.24);
+  --c-plum-subtle: rgba(125, 96, 141, 0.13);
 
-  --danger: #e56b6b;
-  --danger-light: rgba(229, 107, 107, 0.18);
+  /* Dark Theme Surfaces */
+  --bg-primary: #141b1d;
+  --bg-card: #1b2326;
+  --bg-card-hover: #222c30;
+  --bg-card-solid: #1b2326;
+  --bg-subtle: #232d31;
+  --bg-pill: #2c383e;
 
-  --border-color: #33312e;
-  --border-color-strong: #44423e;
+  --text-main: #edf2f4;
+  --text-muted: #8fa1a7;
+  --text-sub: #b7c7cc;
+
+  --accent-primary: var(--c-teal);
+  --accent-primary-hover: var(--c-teal-hover);
+  --accent-primary-light: var(--c-teal-light);
+
+  --accent-secondary: var(--c-cyan);
+  --accent-secondary-light: var(--c-cyan-light);
+
+  --accent-milestone: var(--c-plum);
+  --accent-milestone-light: var(--c-plum-light);
+
+  --holiday-color: var(--c-terracotta);
+  --holiday-light: var(--c-terracotta-light);
+
+  --makeup-color: var(--c-gold);
+  --makeup-dark: var(--c-gold-dark);
+  --makeup-light: var(--c-gold-light);
+
+  --border-color: #2b363b;
+  --border-color-strong: #3b4950;
   --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 3px 10px rgba(0, 0, 0, 0.45);
 }
 
 /* ─── Reset & Global Styles ─── */
@@ -99,7 +169,7 @@ body {
   flex-direction: column;
 }
 
-/* ─── Header Section (Clean, Spacious Top Bar) ─── */
+/* ─── Header Section ─── */
 .app-header {
   display: flex;
   align-items: center;
@@ -122,7 +192,7 @@ body {
 .brand-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-main);
@@ -130,18 +200,19 @@ body {
 }
 
 .brand-badge i {
-  color: var(--accent-primary);
-  font-size: 1.35rem;
+  color: var(--c-teal);
+  font-size: 1.4rem;
 }
 
 .brand-year {
   font-size: 0.75rem;
-  background: var(--bg-subtle);
-  color: var(--accent-primary);
-  border: 1px solid var(--border-color);
+  background: var(--c-teal-light);
+  color: var(--c-teal);
+  border: 1px solid var(--c-teal-light);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* Header Month Navigator */
@@ -173,9 +244,9 @@ body {
 }
 
 .btn-circle:hover {
-  background: var(--accent-primary);
+  background: var(--c-teal);
   color: #fff;
-  border-color: var(--accent-primary);
+  border-color: var(--c-teal);
 }
 
 .current-month-display {
@@ -184,6 +255,7 @@ body {
   min-width: 100px;
   text-align: center;
   white-space: nowrap;
+  color: var(--text-main);
 }
 
 .header-center .view-tabs {
@@ -199,7 +271,7 @@ body {
   border: none;
   background: transparent;
   color: var(--text-muted);
-  padding: 5px 16px;
+  padding: 6px 16px;
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 500;
@@ -216,9 +288,10 @@ body {
 
 .tab-btn.active {
   background: var(--bg-card);
-  color: var(--accent-primary);
-  font-weight: 600;
+  color: var(--c-teal);
+  font-weight: 700;
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .header-right {
@@ -243,11 +316,11 @@ body {
 }
 
 .btn-icon:hover {
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
+  color: var(--c-teal);
+  border-color: var(--c-teal);
 }
 
-/* ─── Main Grid Layout (Three-Column / Dashboard) ─── */
+/* ─── Main Grid Layout ─── */
 .dashboard-container {
   display: grid;
   grid-template-columns: 280px 1fr 320px;
@@ -269,16 +342,16 @@ body {
 .card-title {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
+  gap: 8px;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 12px;
 }
 
 .card-title i {
-  color: var(--accent-primary);
-  font-size: 1.1rem;
+  color: var(--c-teal);
+  font-size: 1.15rem;
 }
 
 /* ─── Left Sidebar ─── */
@@ -304,10 +377,10 @@ body {
 
 .detail-tag {
   font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--c-teal);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .detail-work-badge {
@@ -315,9 +388,9 @@ body {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background: var(--accent-primary-light);
-  color: var(--accent-primary);
-  border: 1px solid var(--accent-primary-light);
+  background: var(--c-teal-light);
+  color: var(--c-teal);
+  border: 1px solid var(--c-teal-light);
 }
 
 .detail-work-badge.status-rest {
@@ -327,15 +400,15 @@ body {
 }
 
 .detail-work-badge.status-holiday {
-  background: var(--danger-light);
-  color: var(--danger);
-  border-color: rgba(201, 74, 74, 0.2);
+  background: var(--c-terracotta-light);
+  color: var(--c-terracotta);
+  border-color: var(--c-terracotta-light);
 }
 
 .detail-work-badge.status-makeup {
-  background: var(--warning-light);
-  color: var(--warning);
-  border-color: rgba(217, 119, 6, 0.2);
+  background: var(--c-gold-light);
+  color: var(--c-gold-dark);
+  border-color: var(--c-gold-light);
 }
 
 .detail-day-num {
@@ -374,7 +447,7 @@ body {
 }
 
 .pill-item i {
-  color: var(--accent-primary);
+  color: var(--c-cyan);
   font-size: 1rem;
 }
 
@@ -383,12 +456,12 @@ body {
   font-weight: 600;
   padding: 8px 10px;
   border-radius: var(--radius-sm);
-  background: var(--accent-primary-light);
-  color: var(--accent-primary);
+  background: var(--c-terracotta-light);
+  color: var(--c-terracotta);
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--accent-primary-light);
+  border: 1px solid var(--c-terracotta-light);
 }
 
 /* Quick Navigation List Card */
@@ -400,7 +473,7 @@ body {
 .quick-month-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .quick-year-group {
@@ -420,7 +493,7 @@ body {
 }
 
 .quick-year-header.current-year {
-  color: var(--accent-primary);
+  color: var(--c-teal);
 }
 
 .quick-year-header::after {
@@ -447,14 +520,14 @@ body {
 }
 
 .quick-month-btn:hover {
-  border-color: var(--accent-primary);
+  border-color: var(--c-cyan);
   background: var(--bg-card);
 }
 
 .quick-month-btn.active {
-  background: var(--accent-primary);
+  background: var(--c-teal);
   color: #fff;
-  border-color: var(--accent-primary);
+  border-color: var(--c-teal);
 }
 
 .quick-month-name {
@@ -464,7 +537,7 @@ body {
 
 .quick-month-sub {
   font-size: 0.68rem;
-  opacity: 0.8;
+  opacity: 0.85;
   margin-top: 2px;
 }
 
@@ -513,39 +586,45 @@ body {
 }
 
 .month-title {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 800;
   letter-spacing: -0.01em;
+  color: var(--text-main);
 }
 
 .month-stats-badge {
   font-size: 0.75rem;
-  color: var(--text-muted);
-  background: var(--bg-subtle);
+  color: var(--c-teal);
+  background: var(--c-teal-light);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  font-weight: 600;
+  border: 1px solid var(--c-teal-light);
 }
 
-/* Relocated "回到今天" Button */
+/* "回到今天" Button */
 .btn-today-inline {
   border: 1px solid var(--border-color);
   background: var(--bg-subtle);
   color: var(--text-main);
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   transition: all 0.15s ease;
 }
 
+.btn-today-inline i {
+  color: var(--c-teal);
+}
+
 .btn-today-inline:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  border-color: var(--c-teal);
+  color: var(--c-teal);
   background: var(--bg-card);
 }
 
@@ -558,7 +637,7 @@ body {
   flex: 1;
 }
 
-/* Clean Weekday Headers (No Background Fill, Tight Gap to First Row) */
+/* Weekday Headers */
 .cal-weekday {
   text-align: center;
   font-size: 0.85rem;
@@ -570,7 +649,7 @@ body {
 }
 
 .cal-weekday.weekend {
-  color: var(--warning);
+  color: var(--c-gold-dark);
 }
 
 /* Calendar Day Box */
@@ -591,7 +670,7 @@ body {
 
 .cal-day:hover {
   background: var(--bg-card-hover);
-  border-color: var(--accent-primary);
+  border-color: var(--c-cyan);
   box-shadow: var(--shadow-md);
 }
 
@@ -602,35 +681,38 @@ body {
   border-color: transparent;
 }
 
-/* Today Box Highlight: Clear Solid Border + Soft Fill */
+/* Today Box Highlight: Teal Border + Subtle Teal Fill */
 .cal-day.day-today {
-  border: 2px solid var(--accent-primary) !important;
-  background: var(--accent-primary-light);
-  box-shadow: 0 0 0 1px var(--accent-primary);
+  border: 2px solid var(--c-teal) !important;
+  background: var(--c-teal-light);
+  box-shadow: 0 0 0 1px var(--c-teal);
 }
 
 .cal-day.day-selected {
-  box-shadow: 0 0 0 2px var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--c-teal);
 }
 
 .cal-day.day-rest {
   background: var(--bg-subtle);
 }
 
+/* Statutory Holiday Day Cell: Terracotta Red Soft Fill */
 .cal-day.day-holiday {
-  background: var(--danger-light);
-  border-color: rgba(201, 74, 74, 0.25);
+  background: var(--c-terracotta-light);
+  border-color: rgba(198, 88, 64, 0.3);
 }
 
+/* Makeup Day Cell: Amber Gold Soft Fill */
 .cal-day.day-makeup {
-  background: var(--warning-light);
-  border-color: rgba(217, 119, 6, 0.25);
+  background: var(--c-gold-light);
+  border-color: rgba(244, 206, 75, 0.4);
 }
 
-/* W6 and W15: Standard border restored, soft background retained */
+/* W6 and W15: Deep Plum Milestone styling */
 .cal-day.day-w6,
 .cal-day.day-w15 {
-  background: var(--accent-w6-w15-bg);
+  background: var(--c-plum-light);
+  border-color: rgba(98, 73, 111, 0.28);
 }
 
 .day-header {
@@ -658,25 +740,26 @@ body {
 }
 
 .day-today .day-num {
-  color: var(--accent-primary);
+  color: var(--c-teal);
 }
 
 .day-status-tag {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 1px 4px;
+  padding: 1px 5px;
   border-radius: 2px;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .tag-xiu {
-  background: var(--danger);
+  background: var(--c-terracotta);
   color: #fff;
 }
 
 .tag-ban {
-  background: var(--warning);
-  color: #fff;
+  background: var(--c-gold);
+  color: #3b2c00;
+  font-weight: 800;
 }
 
 .day-footer {
@@ -692,10 +775,10 @@ body {
   color: var(--text-muted);
 }
 
-/* W6 and W15 Prominent Larger Badge */
+/* W6 and W15 Milestone Badge: Deep Plum */
 .day-w6 .workday-badge,
 .day-w15 .workday-badge {
-  background: var(--accent-primary);
+  background: var(--c-plum);
   color: #ffffff;
   font-size: 0.88rem;
   font-weight: 800;
@@ -707,7 +790,7 @@ body {
 .holiday-label {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--danger);
+  color: var(--c-terracotta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -735,17 +818,19 @@ body {
   margin-bottom: 4px;
 }
 
+/* Month Progress: Cyan/Teal */
 .prog-val {
-  color: var(--accent-primary);
+  color: var(--c-cyan);
   font-weight: 700;
 }
 
-.accent-success {
-  color: var(--success) !important;
+/* Year Progress: Plum */
+.accent-plum {
+  color: var(--c-plum) !important;
 }
 
 .prog-track {
-  height: 6px;
+  height: 7px;
   background: var(--bg-subtle);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -755,12 +840,12 @@ body {
 
 .prog-fill {
   height: 100%;
-  background: var(--accent-primary);
+  background: var(--c-cyan);
   transition: width 0.3s ease;
 }
 
-.fill-success {
-  background: var(--success);
+.fill-plum {
+  background: var(--c-plum) !important;
 }
 
 .prog-sub {
@@ -788,8 +873,8 @@ body {
 }
 
 .counter-box.highlight {
-  background: var(--success-light);
-  border-color: rgba(72, 130, 92, 0.2);
+  background: var(--c-teal-light);
+  border-color: rgba(63, 111, 118, 0.25);
 }
 
 .counter-num {
@@ -797,6 +882,10 @@ body {
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.1;
+}
+
+.counter-box.highlight .counter-num {
+  color: var(--c-teal);
 }
 
 .counter-lbl {
@@ -830,7 +919,7 @@ body {
 
 .holiday-card-item:hover {
   background: var(--bg-card-hover);
-  border-color: var(--border-color-strong);
+  border-color: var(--c-terracotta-light);
 }
 
 .holiday-card-left .h-name {
@@ -849,15 +938,15 @@ body {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background: var(--accent-primary-light);
-  color: var(--accent-primary);
-  border: 1px solid var(--accent-primary-light);
+  background: var(--c-terracotta-light);
+  color: var(--c-terracotta);
+  border: 1px solid var(--c-terracotta-light);
 }
 
 .holiday-card-right .h-badge.ongoing {
-  background: var(--success-light);
-  color: var(--success);
-  border-color: rgba(72, 130, 92, 0.2);
+  background: var(--c-teal-light);
+  color: var(--c-teal);
+  border-color: var(--c-teal-light);
 }
 
 /* ─── Year Overview Mode ─── */
@@ -883,6 +972,7 @@ body {
   font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.01em;
+  color: var(--text-main);
 }
 
 .year-legend {
@@ -896,19 +986,19 @@ body {
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: var(--radius-sm);
 }
 
 .dot-work { background: var(--bg-pill); }
 .dot-rest { background: var(--bg-subtle); border: 1px solid var(--border-color-strong); }
-.dot-holiday { background: var(--danger); }
-.dot-makeup { background: var(--warning); }
+.dot-holiday { background: var(--c-terracotta); }
+.dot-makeup { background: var(--c-gold); }
 
 .year-grid {
   display: flex;
@@ -925,7 +1015,7 @@ body {
 .year-overview-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--accent-primary);
+  color: var(--c-teal);
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 6px;
 }
@@ -975,6 +1065,7 @@ body {
   border-radius: 2px;
   color: var(--text-sub);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .mini-day-box.muted {
@@ -982,20 +1073,20 @@ body {
 }
 
 .mini-day-box.m-holiday {
-  background: var(--danger);
+  background: var(--c-terracotta);
   color: #ffffff;
   font-weight: 700;
 }
 
 .mini-day-box.m-makeup {
-  background: var(--warning);
-  color: #ffffff;
-  font-weight: 700;
+  background: var(--c-gold);
+  color: #3b2c00;
+  font-weight: 800;
 }
 
 .mini-day-box.m-today {
-  box-shadow: 0 0 0 1.5px var(--accent-primary);
-  color: var(--accent-primary);
+  box-shadow: 0 0 0 1.5px var(--c-teal);
+  color: var(--c-teal);
   font-weight: 800;
 }
 
