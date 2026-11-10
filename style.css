@@ -1,148 +1,102 @@
 /* ─── CSS Variables & Multi-Color Harmonized Aesthetics ─── */
-/* Requested Color Palette:
-   1. #3F6F76 - Deep Teal (Primary brand, active states, key actions, today highlight)
-   2. #69B7CE - Sky Cyan (Secondary accent, month progress, subtle highlights, active badges)
-   3. #F4CE4B - Amber Gold (Makeup workday tags & tints, weekend accents)
-   4. #C65840 - Terracotta Red (Statutory holiday tags, countdown cards, holiday fills)
-   5. #62496F - Deep Plum (Milestones W6/W15, year progress, annual chart accents)
+/*
+   五色定岗规则（青=现在，蓝=操作，黄=快到期，红=节假日，紫=年度）：
+   1. #3F6F76 - 深青 (主色: 品牌与当前态、今天日期格实心高亮、当月进度条、月份导航选中态、Logo)
+   2. #69B7CE - 天蓝 (辅助: 视图切换选中态、操作/回到今天按钮、周数标签W1~W21底色、普通tag)
+   3. #F4CE4B - 金黄 (点缀: 临期提醒条底色、倒计时<30天临期tag底色。禁止直接做文字，使用深黄 #7A6210)
+   4. #C65840 - 赭红 (语义: 节假日日期格浅底与数字、假期倒计时节日名、六/日周末表头文字)
+   5. #62496F - 灰紫 (语义: 年度完成度进度条、月份导航2027年分隔标识、年度统计数字)
 */
 :root {
-  /* Palette Foundations */
+  /* 基础五色色板 */
   --c-teal: #3F6F76;
-  --c-teal-hover: #335b61;
-  --c-teal-light: rgba(63, 111, 118, 0.12);
-  --c-teal-subtle: rgba(63, 111, 118, 0.06);
+  --c-teal-hover: #32585e;
+  --c-teal-light: #EBF2F2; /* 10%~12% 浅色阶：标签底、选中态底 */
 
   --c-cyan: #69B7CE;
   --c-cyan-hover: #54a5bd;
-  --c-cyan-light: rgba(105, 183, 206, 0.15);
-  --c-cyan-subtle: rgba(105, 183, 206, 0.08);
+  --c-cyan-light: #E8F4F8; /* 15% 浅色阶：周数标签底、悬停底、普通信息tag */
 
   --c-gold: #F4CE4B;
-  --c-gold-hover: #e0bc39;
-  --c-gold-dark: #b89218;
-  --c-gold-light: rgba(244, 206, 75, 0.18);
-  --c-gold-subtle: rgba(244, 206, 75, 0.09);
+  --c-gold-light: #FDF5DB; /* 20% 浅色阶：临期提醒条、临期tag底 */
+  --c-gold-text: #7A6210;  /* 深黄文字，保证对白底/浅黄底对比度 > 4.5:1 */
 
   --c-terracotta: #C65840;
   --c-terracotta-hover: #b04933;
-  --c-terracotta-light: rgba(198, 88, 64, 0.13);
-  --c-terracotta-subtle: rgba(198, 88, 64, 0.06);
+  --c-terracotta-light: #F8EBE8; /* 12% 浅色阶：节假日日期格底 */
 
   --c-plum: #62496F;
-  --c-plum-hover: #50395c;
-  --c-plum-light: rgba(98, 73, 111, 0.13);
-  --c-plum-subtle: rgba(98, 73, 111, 0.07);
+  --c-plum-light: #ECE9EE; /* 年度区域分隔底 */
 
-  /* Surface & Neutral Colors (Clean slate-tinted warm minimal) */
-  --bg-primary: #f6f8f9;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f9fbfb;
-  --bg-card-solid: #ffffff;
-  --bg-subtle: #eff3f4;
-  --bg-pill: #e3eaec;
+  /* 中性色规范 */
+  --bg-primary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F9FAFB;
+  --bg-subtle: #F9FAFB;
+  --border-color: #E5E7EB;
+  --border-subtle: #F3F4F6;
 
-  --text-main: #243033;
-  --text-muted: #6f7f84;
-  --text-sub: #49585d;
+  --text-main: #1F2937;
+  --text-sub: #4B5563;
+  --text-muted: #6B7280;
+  --text-weak: #9CA3AF;
+  --text-disabled: #D1D5DB;
 
-  /* Semantic Color Aliases */
+  /* 语义化映射 */
   --accent-primary: var(--c-teal);
-  --accent-primary-hover: var(--c-teal-hover);
-  --accent-primary-light: var(--c-teal-light);
-
   --accent-secondary: var(--c-cyan);
-  --accent-secondary-light: var(--c-cyan-light);
-
-  --accent-milestone: var(--c-plum);
-  --accent-milestone-light: var(--c-plum-light);
-
   --holiday-color: var(--c-terracotta);
   --holiday-light: var(--c-terracotta-light);
 
-  --makeup-color: var(--c-gold);
-  --makeup-dark: var(--c-gold-dark);
-  --makeup-light: var(--c-gold-light);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
 
-  --border-color: #e0e6e8;
-  --border-color-strong: #c8d3d6;
-  --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgba(36, 48, 51, 0.05);
-  --shadow-lg: 0 3px 10px rgba(36, 48, 51, 0.08);
-
-  --radius-sm: 3px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-full: 4px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
 
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 
 [data-theme="dark"] {
-  /* Dark Theme Palette Variations */
+  /* 暗色模式适配（保持角色分配规则完全一致） */
   --c-teal: #4e8891;
   --c-teal-hover: #5d9ba5;
-  --c-teal-light: rgba(78, 136, 145, 0.22);
-  --c-teal-subtle: rgba(78, 136, 145, 0.12);
+  --c-teal-light: rgba(78, 136, 145, 0.24);
 
   --c-cyan: #7ec7dc;
   --c-cyan-hover: #96d6e7;
   --c-cyan-light: rgba(126, 199, 220, 0.22);
-  --c-cyan-subtle: rgba(126, 199, 220, 0.12);
 
   --c-gold: #f6d668;
-  --c-gold-hover: #fae188;
-  --c-gold-dark: #f6d668;
   --c-gold-light: rgba(246, 214, 104, 0.22);
-  --c-gold-subtle: rgba(246, 214, 104, 0.12);
+  --c-gold-text: #fae188;
 
-  --c-terracotta: #d66b53;
-  --c-terracotta-hover: #e37e67;
-  --c-terracotta-light: rgba(214, 107, 83, 0.22);
-  --c-terracotta-subtle: rgba(214, 107, 83, 0.12);
+  --c-terracotta: #e06c55;
+  --c-terracotta-hover: #eb7c66;
+  --c-terracotta-light: rgba(224, 108, 85, 0.22);
 
-  --c-plum: #7d608d;
-  --c-plum-hover: #9172a1;
-  --c-plum-light: rgba(125, 96, 141, 0.24);
-  --c-plum-subtle: rgba(125, 96, 141, 0.13);
+  --c-plum: #876798;
+  --c-plum-light: rgba(135, 103, 152, 0.22);
 
-  /* Dark Theme Surfaces */
-  --bg-primary: #141b1d;
-  --bg-card: #1b2326;
-  --bg-card-hover: #222c30;
-  --bg-card-solid: #1b2326;
-  --bg-subtle: #232d31;
-  --bg-pill: #2c383e;
+  --bg-primary: #111827;
+  --bg-card: #182232;
+  --bg-card-hover: #1f2c40;
+  --bg-subtle: #1e293b;
+  --border-color: #2e3e50;
+  --border-subtle: #243242;
 
-  --text-main: #edf2f4;
-  --text-muted: #8fa1a7;
-  --text-sub: #b7c7cc;
+  --text-main: #f9fafb;
+  --text-sub: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-weak: #6b7280;
+  --text-disabled: #4b5563;
 
-  --accent-primary: var(--c-teal);
-  --accent-primary-hover: var(--c-teal-hover);
-  --accent-primary-light: var(--c-teal-light);
-
-  --accent-secondary: var(--c-cyan);
-  --accent-secondary-light: var(--c-cyan-light);
-
-  --accent-milestone: var(--c-plum);
-  --accent-milestone-light: var(--c-plum-light);
-
-  --holiday-color: var(--c-terracotta);
-  --holiday-light: var(--c-terracotta-light);
-
-  --makeup-color: var(--c-gold);
-  --makeup-dark: var(--c-gold-dark);
-  --makeup-light: var(--c-gold-light);
-
-  --border-color: #2b363b;
-  --border-color-strong: #3b4950;
-  --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 3px 10px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* ─── Reset & Global Styles ─── */
+/* ─── Reset & Base ─── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -169,7 +123,7 @@ body {
   flex-direction: column;
 }
 
-/* ─── Header Section ─── */
+/* ─── 4.1 顶栏 ─── */
 .app-header {
   display: flex;
   align-items: center;
@@ -199,23 +153,32 @@ body {
   white-space: nowrap;
 }
 
-.brand-badge i {
-  color: var(--c-teal);
-  font-size: 1.4rem;
+/* 左侧 Logo 方块：深青 #3F6F76 底 + 白色图标 */
+.brand-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--c-teal);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
 }
 
+/* "2026-2027" 年份标签：深青 10% 浅色阶底 #EBF2F2 + 深青文字 */
 .brand-year {
   font-size: 0.75rem;
   background: var(--c-teal-light);
   color: var(--c-teal);
-  border: 1px solid var(--c-teal-light);
+  border: 1px solid transparent;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 
-/* Header Month Navigator */
+/* 顶栏月份切换器 */
 .header-month-nav {
   display: flex;
   align-items: center;
@@ -233,7 +196,7 @@ body {
   height: 30px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   color: var(--text-main);
   display: flex;
   align-items: center;
@@ -244,9 +207,9 @@ body {
 }
 
 .btn-circle:hover {
-  background: var(--c-teal);
-  color: #fff;
-  border-color: var(--c-teal);
+  background: var(--c-cyan-light);
+  color: var(--c-teal);
+  border-color: var(--c-cyan);
 }
 
 .current-month-display {
@@ -258,6 +221,7 @@ body {
   color: var(--text-main);
 }
 
+/* 右上视图切换（单月/双月连看/两年图谱）：未选中为灰字 #6B7280，选中态用天蓝 #69B7CE 浅蓝底 + 天蓝文字 */
 .header-center .view-tabs {
   display: flex;
   background: var(--bg-subtle);
@@ -268,7 +232,7 @@ body {
 }
 
 .tab-btn {
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-muted);
   padding: 6px 16px;
@@ -287,11 +251,10 @@ body {
 }
 
 .tab-btn.active {
-  background: var(--bg-card);
+  background: var(--c-cyan-light);
   color: var(--c-teal);
+  border-color: rgba(105, 183, 206, 0.4);
   font-weight: 700;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
 }
 
 .header-right {
@@ -306,7 +269,7 @@ body {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
   background: var(--bg-card);
-  color: var(--text-main);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -320,7 +283,7 @@ body {
   border-color: var(--c-teal);
 }
 
-/* ─── Main Grid Layout ─── */
+/* ─── 主体三栏布局 ─── */
 .dashboard-container {
   display: grid;
   grid-template-columns: 280px 1fr 320px;
@@ -329,7 +292,7 @@ body {
   min-height: 0;
 }
 
-/* Common Card Styles */
+/* 卡片通用 */
 .dash-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -354,7 +317,7 @@ body {
   font-size: 1.15rem;
 }
 
-/* ─── Left Sidebar ─── */
+/* ─── 4.2 左侧「今日详情」卡 ─── */
 .dash-left-sidebar {
   display: flex;
   flex-direction: column;
@@ -362,10 +325,9 @@ body {
   min-height: 0;
 }
 
-/* Date Detail Card */
 .date-detail-card {
   border: 1px solid var(--border-color);
-  position: relative;
+  background: var(--bg-card);
 }
 
 .detail-header {
@@ -378,7 +340,7 @@ body {
 .detail-tag {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--c-teal);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -388,34 +350,32 @@ body {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background: var(--c-teal-light);
+  background: var(--c-cyan-light);
   color: var(--c-teal);
-  border: 1px solid var(--c-teal-light);
+  border: 1px solid transparent;
 }
 
 .detail-work-badge.status-rest {
   background: var(--bg-subtle);
   color: var(--text-muted);
-  border-color: var(--border-color);
 }
 
 .detail-work-badge.status-holiday {
   background: var(--c-terracotta-light);
   color: var(--c-terracotta);
-  border-color: var(--c-terracotta-light);
 }
 
 .detail-work-badge.status-makeup {
   background: var(--c-gold-light);
-  color: var(--c-gold-dark);
-  border-color: var(--c-gold-light);
+  color: var(--c-gold-text);
 }
 
+/* "10" 大数字：深青 #3F6F76（全页第一视觉锚点） */
 .detail-day-num {
-  font-size: 3rem;
+  font-size: 3.2rem;
   font-weight: 800;
   line-height: 1;
-  color: var(--text-main);
+  color: var(--c-teal);
   letter-spacing: -0.03em;
   margin-bottom: 4px;
 }
@@ -434,12 +394,13 @@ body {
   margin-bottom: 12px;
 }
 
+/* "本月第 7 个工作日 / 当年第 314 天"：中性灰 #6B7280，图标用天蓝 #69B7CE */
 .pill-item {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: var(--text-sub);
+  color: var(--text-muted);
   background: var(--bg-subtle);
   padding: 6px 10px;
   border-radius: var(--radius-sm);
@@ -451,20 +412,36 @@ body {
   font-size: 1rem;
 }
 
+/* 提醒条：金黄 20% 浅色阶 #FDF5DB 底 + 深黄文字 #7A6210，图标赭红 */
 .detail-holiday-info {
   font-size: 0.82rem;
   font-weight: 600;
   padding: 8px 10px;
   border-radius: var(--radius-sm);
-  background: var(--c-terracotta-light);
-  color: var(--c-terracotta);
+  background: var(--c-gold-light);
+  color: var(--c-gold-text);
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--c-terracotta-light);
+  border: 1px solid rgba(244, 206, 75, 0.3);
 }
 
-/* Quick Navigation List Card */
+.detail-holiday-info i {
+  color: var(--c-terracotta);
+}
+
+/* 节日当天模式 */
+.detail-holiday-info.is-holiday-today {
+  background: var(--c-terracotta-light);
+  color: var(--c-terracotta);
+  border-color: rgba(198, 88, 64, 0.25);
+}
+
+.detail-holiday-info.is-holiday-today i {
+  color: var(--c-terracotta);
+}
+
+/* ─── 4.4 左侧「月份导航」 ─── */
 .quick-nav-card {
   flex: 1;
   overflow-y: auto;
@@ -473,13 +450,19 @@ body {
 .quick-month-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .quick-year-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+/* 2027 年区域顶部增加一条 2px 灰紫 #62496F 分隔条作为年度标识 */
+.quick-year-group.group-year-2027 {
+  border-top: 2px solid var(--c-plum);
+  padding-top: 12px;
 }
 
 .quick-year-header {
@@ -496,37 +479,33 @@ body {
   color: var(--c-teal);
 }
 
-.quick-year-header::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border-color);
-}
-
 .quick-year-months {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
 }
 
+/* 月份导航按钮：未选中白底灰字，悬停天蓝浅底；选中月份深青底+白字 */
 .quick-month-btn {
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 6px 2px;
   text-align: center;
   cursor: pointer;
+  color: var(--text-muted);
   transition: all 0.15s ease;
 }
 
 .quick-month-btn:hover {
+  background: var(--c-cyan-light);
+  color: var(--c-teal);
   border-color: var(--c-cyan);
-  background: var(--bg-card);
 }
 
 .quick-month-btn.active {
   background: var(--c-teal);
-  color: #fff;
+  color: #ffffff;
   border-color: var(--c-teal);
 }
 
@@ -541,7 +520,7 @@ body {
   margin-top: 2px;
 }
 
-/* ─── Main Center Area: Calendar ─── */
+/* ─── 4.3 日历主区（重点） ─── */
 .dash-main-cal {
   padding: 16px;
   overflow-y: auto;
@@ -599,14 +578,13 @@ body {
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  border: 1px solid var(--c-teal-light);
 }
 
-/* "回到今天" Button */
+/* "回到今天" 次按钮：天蓝 #69B7CE 浅阶底 + 天蓝文字与图标 */
 .btn-today-inline {
-  border: 1px solid var(--border-color);
-  background: var(--bg-subtle);
-  color: var(--text-main);
+  border: 1px solid rgba(105, 183, 206, 0.4);
+  background: var(--c-cyan-light);
+  color: var(--c-teal);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
@@ -619,13 +597,17 @@ body {
 }
 
 .btn-today-inline i {
-  color: var(--c-teal);
+  color: var(--c-cyan);
 }
 
 .btn-today-inline:hover {
-  border-color: var(--c-teal);
-  color: var(--c-teal);
-  background: var(--bg-card);
+  background: var(--c-cyan);
+  color: #ffffff;
+  border-color: var(--c-cyan);
+}
+
+.btn-today-inline:hover i {
+  color: #ffffff;
 }
 
 /* Calendar Grid */
@@ -637,33 +619,31 @@ body {
   flex: 1;
 }
 
-/* Weekday Headers */
+/* 周末列（六/日）：表头"六"用赭红、"日"用赭红（节假/休息日语义统一为红），取消黄字和紫字 */
 .cal-weekday {
   text-align: center;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-muted);
   padding: 2px 0 4px;
-  background: transparent;
-  border-radius: 0;
 }
 
 .cal-weekday.weekend {
-  color: var(--c-gold-dark);
+  color: var(--c-terracotta);
 }
 
-/* Calendar Day Box */
+/* 日期格默认：白底，日期数字 #1F2937；非当月日期 #D1D5DB；格与格之间 1px #F3F4F6/border-color 分隔 */
 .cal-day {
   position: relative;
   min-height: 64px;
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   border-radius: var(--radius-sm);
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
   transition: all 0.15s ease;
   user-select: none;
 }
@@ -671,48 +651,70 @@ body {
 .cal-day:hover {
   background: var(--bg-card-hover);
   border-color: var(--c-cyan);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .cal-day.muted {
-  opacity: 0.25;
+  opacity: 0.35;
   pointer-events: none;
   background: transparent;
   border-color: transparent;
 }
 
-/* Today Box Highlight: Teal Border + Subtle Teal Fill */
-.cal-day.day-today {
-  border: 2px solid var(--c-teal) !important;
-  background: var(--c-teal-light);
-  box-shadow: 0 0 0 1px var(--c-teal);
+.cal-day.muted .day-num {
+  color: var(--text-disabled);
 }
 
-.cal-day.day-selected {
-  box-shadow: 0 0 0 2px var(--c-teal);
-}
-
+/* 周末日期格底用中性浅灰 #F9FAFB，不用彩色 */
 .cal-day.day-rest {
   background: var(--bg-subtle);
 }
 
-/* Statutory Holiday Day Cell: Terracotta Red Soft Fill */
+/* 节假日格：赭红 12% 浅色阶 #F8EBE8 底 + 赭红数字 */
 .cal-day.day-holiday {
   background: var(--c-terracotta-light);
-  border-color: rgba(198, 88, 64, 0.3);
+  border-color: rgba(198, 88, 64, 0.2);
 }
 
-/* Makeup Day Cell: Amber Gold Soft Fill */
+.cal-day.day-holiday .day-num {
+  color: var(--c-terracotta);
+}
+
+/* 调休补班格 */
 .cal-day.day-makeup {
   background: var(--c-gold-light);
-  border-color: rgba(244, 206, 75, 0.4);
+  border-color: rgba(244, 206, 75, 0.3);
 }
 
-/* W6 and W15: Deep Plum Milestone styling */
-.cal-day.day-w6,
-.cal-day.day-w15 {
-  background: var(--c-plum-light);
-  border-color: rgba(98, 73, 111, 0.28);
+/* "今天"格：深青 #3F6F76 实心底 + 白色数字（全页第一视觉锚点） */
+.cal-day.day-today {
+  background: var(--c-teal) !important;
+  border: 1px solid var(--c-teal) !important;
+  box-shadow: 0 2px 6px rgba(63, 111, 118, 0.3);
+}
+
+.cal-day.day-today .day-num {
+  color: #ffffff !important;
+}
+
+.cal-day.day-today .workday-badge {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+.cal-day.day-today .holiday-label {
+  color: #ffffff !important;
+}
+
+.cal-day.day-today .day-status-tag {
+  background: #ffffff !important;
+  color: var(--c-teal) !important;
+}
+
+/* 选中非今天日期格 */
+.cal-day.day-selected:not(.day-today) {
+  border-color: var(--c-teal);
+  box-shadow: 0 0 0 1.5px var(--c-teal);
 }
 
 .day-header {
@@ -722,7 +724,6 @@ body {
   width: 100%;
 }
 
-/* Centered & Prominent Large Day Number */
 .day-body {
   display: flex;
   align-items: center;
@@ -739,10 +740,7 @@ body {
   text-align: center;
 }
 
-.day-today .day-num {
-  color: var(--c-teal);
-}
-
+/* 角标：休/班小色块 */
 .day-status-tag {
   font-size: 0.72rem;
   font-weight: 700;
@@ -758,7 +756,7 @@ body {
 
 .tag-ban {
   background: var(--c-gold);
-  color: #3b2c00;
+  color: var(--c-gold-text);
   font-weight: 800;
 }
 
@@ -769,22 +767,14 @@ body {
   width: 100%;
 }
 
+/* 周数标签（W1~W21）：天蓝 15% 浅色阶 #E8F4F8 底 + 深青文字 #3F6F76，取消紫底 W 标签 */
 .workday-badge {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  color: var(--text-muted);
-}
-
-/* W6 and W15 Milestone Badge: Deep Plum */
-.day-w6 .workday-badge,
-.day-w15 .workday-badge {
-  background: var(--c-plum);
-  color: #ffffff;
-  font-size: 0.88rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  letter-spacing: 0.02em;
+  color: var(--c-teal);
+  background: var(--c-cyan-light);
+  padding: 1px 6px;
+  border-radius: 2px;
 }
 
 .holiday-label {
@@ -797,7 +787,7 @@ body {
   max-width: 100%;
 }
 
-/* ─── Right Sidebar ─── */
+/* ─── 4.5 & 4.6 右侧边栏 ─── */
 .dash-right-sidebar {
   display: flex;
   flex-direction: column;
@@ -805,7 +795,7 @@ body {
   min-height: 0;
 }
 
-/* Progress Card */
+/* 工作进度卡片 */
 .prog-group {
   margin-bottom: 12px;
 }
@@ -818,29 +808,28 @@ body {
   margin-bottom: 4px;
 }
 
-/* Month Progress: Cyan/Teal */
+/* 当月进度条：深青 #3F6F76 填充，轨道 #E5E7EB */
 .prog-val {
-  color: var(--c-cyan);
+  color: var(--c-teal);
   font-weight: 700;
 }
 
-/* Year Progress: Plum */
+/* 年度完成度：灰紫 #62496F 填充与文字 */
 .accent-plum {
   color: var(--c-plum) !important;
 }
 
 .prog-track {
   height: 7px;
-  background: var(--bg-subtle);
+  background: var(--border-color);
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-bottom: 4px;
-  border: 1px solid var(--border-color);
 }
 
 .prog-fill {
   height: 100%;
-  background: var(--c-cyan);
+  background: var(--c-teal);
   transition: width 0.3s ease;
 }
 
@@ -853,6 +842,7 @@ body {
   color: var(--text-muted);
 }
 
+/* 已休法定假 / 剩余法定假 两个数字卡：数字深青，卡片底 #F9FAFB，不用彩色边框 */
 .counter-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -872,20 +862,11 @@ body {
   align-items: center;
 }
 
-.counter-box.highlight {
-  background: var(--c-teal-light);
-  border-color: rgba(63, 111, 118, 0.25);
-}
-
 .counter-num {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--text-main);
-  line-height: 1.1;
-}
-
-.counter-box.highlight .counter-num {
   color: var(--c-teal);
+  line-height: 1.1;
 }
 
 .counter-lbl {
@@ -894,7 +875,7 @@ body {
   font-weight: 500;
 }
 
-/* Holidays Card */
+/* 4.6 假期倒计时 */
 .holidays-card {
   flex: 1;
   overflow-y: auto;
@@ -919,13 +900,14 @@ body {
 
 .holiday-card-item:hover {
   background: var(--bg-card-hover);
-  border-color: var(--c-terracotta-light);
+  border-color: rgba(198, 88, 64, 0.25);
 }
 
+/* 节日名称（元旦/春节/清明…）：统一赭红 #C65840 */
 .holiday-card-left .h-name {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--c-terracotta);
 }
 
 .holiday-card-left .h-dates {
@@ -933,23 +915,33 @@ body {
   color: var(--text-muted);
 }
 
+/* "还剩 N 个工作日" tag：
+   - N ≥ 30：天蓝浅底 #E8F4F8 + 深青文字（普通信息）
+   - N < 30：金黄浅底 #FDF5DB + 深黄文字 #7A6210（临期提醒）
+   - 进行中：深青浅阶 #EBF2F2 + 深青文字
+*/
 .holiday-card-right .h-badge {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
-  background: var(--c-terracotta-light);
-  color: var(--c-terracotta);
-  border: 1px solid var(--c-terracotta-light);
+  background: var(--c-cyan-light);
+  color: var(--c-teal);
+  border: 1px solid transparent;
+}
+
+.holiday-card-right .h-badge.tag-urgent {
+  background: var(--c-gold-light);
+  color: var(--c-gold-text);
+  border-color: rgba(244, 206, 75, 0.35);
 }
 
 .holiday-card-right .h-badge.ongoing {
   background: var(--c-teal-light);
   color: var(--c-teal);
-  border-color: var(--c-teal-light);
 }
 
-/* ─── Year Overview Mode ─── */
+/* ─── 两年图谱视图 ─── */
 .year-view-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -980,7 +972,7 @@ body {
   align-items: center;
   gap: 12px;
   font-size: 0.8rem;
-  color: var(--text-sub);
+  color: var(--text-muted);
 }
 
 .legend-item {
@@ -995,8 +987,8 @@ body {
   border-radius: var(--radius-sm);
 }
 
-.dot-work { background: var(--bg-pill); }
-.dot-rest { background: var(--bg-subtle); border: 1px solid var(--border-color-strong); }
+.dot-work { background: var(--bg-subtle); border: 1px solid var(--border-color); }
+.dot-rest { background: var(--bg-subtle); border: 1px solid var(--border-color); }
 .dot-holiday { background: var(--c-terracotta); }
 .dot-makeup { background: var(--c-gold); }
 
@@ -1020,6 +1012,11 @@ body {
   padding-bottom: 6px;
 }
 
+.year-overview-section.section-2027 .year-overview-title {
+  color: var(--c-plum);
+  border-bottom-color: var(--c-plum);
+}
+
 .year-overview-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1027,7 +1024,7 @@ body {
 }
 
 .year-mini-month {
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   border-radius: var(--radius-sm);
   padding: 10px;
   border: 1px solid var(--border-color);
@@ -1055,6 +1052,10 @@ body {
   margin-bottom: 2px;
 }
 
+.mini-day-lbl.weekend {
+  color: var(--c-terracotta);
+}
+
 .mini-day-box {
   aspect-ratio: 1;
   font-size: 0.68rem;
@@ -1080,17 +1081,17 @@ body {
 
 .mini-day-box.m-makeup {
   background: var(--c-gold);
-  color: #3b2c00;
+  color: var(--c-gold-text);
   font-weight: 800;
 }
 
 .mini-day-box.m-today {
-  box-shadow: 0 0 0 1.5px var(--c-teal);
-  color: var(--c-teal);
+  background: var(--c-teal);
+  color: #ffffff;
   font-weight: 800;
 }
 
-/* ─── Responsive Media Queries ─── */
+/* ─── 响应式布局 ─── */
 @media (max-width: 1400px) {
   .dashboard-container {
     grid-template-columns: 260px 1fr 280px;

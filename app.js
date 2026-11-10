@@ -100,7 +100,7 @@ function renderCalendar() {
   const wrapper = document.getElementById('cal-wrapper');
   if (!wrapper) return;
 
-  wrapper.innerHTML = '';
+  wrapper.replaceChildren();
   wrapper.className = 'cal-wrapper mode-' + (viewMode === 'dual' ? 'dual' : 'single');
 
   const monthDisplayText = document.getElementById('month-display-text');
@@ -113,16 +113,16 @@ function renderCalendar() {
     }
     if (monthDisplayText) {
       if (viewY === nextY) {
-        monthDisplayText.innerText = `${viewY}年 ${viewM + 1}月 - ${nextM + 1}月`;
+        monthDisplayText.textContent = `${viewY}年 ${viewM + 1}月 - ${nextM + 1}月`;
       } else {
-        monthDisplayText.innerText = `${viewY}年${viewM + 1}月 - ${nextY}年${nextM + 1}月`;
+        monthDisplayText.textContent = `${viewY}年${viewM + 1}月 - ${nextY}年${nextM + 1}月`;
       }
     }
     renderMonthBlock(wrapper, viewY, viewM);
     renderMonthBlock(wrapper, nextY, nextM);
   } else {
     if (monthDisplayText) {
-      monthDisplayText.innerText = `${viewY}年 ${viewM + 1}月`;
+      monthDisplayText.textContent = `${viewY}年 ${viewM + 1}月`;
     }
     renderMonthBlock(wrapper, viewY, viewM);
   }
@@ -149,16 +149,35 @@ function renderMonthBlock(container, y, m) {
     if (isWork(new Date(y, m, day))) workdaysInMonth++;
   }
 
-  header.innerHTML = `
-    <div class="month-header-left">
-      <span class="month-title">${y}年 ${m + 1}月</span>
-      <span class="month-stats-badge">共 ${workdaysInMonth} 个工作日</span>
-    </div>
-    <button class="btn-today-inline" onclick="goToday()" title="回到今天">
-      <i class="ph ph-target"></i>
-      <span>回到今天</span>
-    </button>
-  `;
+  const headerLeft = document.createElement('div');
+  headerLeft.className = 'month-header-left';
+
+  const monthTitle = document.createElement('span');
+  monthTitle.className = 'month-title';
+  monthTitle.textContent = `${y}年 ${m + 1}月`;
+
+  const statsBadge = document.createElement('span');
+  statsBadge.className = 'month-stats-badge';
+  statsBadge.textContent = `共 ${workdaysInMonth} 个工作日`;
+
+  headerLeft.appendChild(monthTitle);
+  headerLeft.appendChild(statsBadge);
+
+  const todayBtn = document.createElement('button');
+  todayBtn.className = 'btn-today-inline';
+  todayBtn.title = '回到今天';
+  todayBtn.onclick = goToday;
+
+  const btnIcon = document.createElement('i');
+  btnIcon.className = 'ph ph-target';
+  const btnText = document.createElement('span');
+  btnText.textContent = '回到今天';
+
+  todayBtn.appendChild(btnIcon);
+  todayBtn.appendChild(btnText);
+
+  header.appendChild(headerLeft);
+  header.appendChild(todayBtn);
   monthBlock.appendChild(header);
 
   // Calendar Grid
@@ -166,10 +185,11 @@ function renderMonthBlock(container, y, m) {
   grid.className = 'cal-grid';
 
   // Weekday Headers (Monday to Sunday)
+  // 六、日 weekend 表头使用赭红文字
   WD_NAMES_SHORT.forEach((txt, idx) => {
     const di = document.createElement('div');
     di.className = 'cal-weekday' + (idx >= 5 ? ' weekend' : '');
-    di.innerText = txt;
+    di.textContent = txt;
     grid.appendChild(di);
   });
 
@@ -190,7 +210,7 @@ function renderMonthBlock(container, y, m) {
     dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
-    num.innerText = prevMDays - i;
+    num.textContent = prevMDays - i;
     dayBody.appendChild(num);
 
     const dayFooter = document.createElement('div');
@@ -216,10 +236,6 @@ function renderMonthBlock(container, y, m) {
     const di = document.createElement('div');
     di.className = 'cal-day';
 
-    // Highlight W6 and W15
-    if (work && (wCnt === 6 || wCnt === 15)) {
-      di.classList.add(wCnt === 6 ? 'day-w6' : 'day-w15');
-    }
     if (str === todayStr) di.classList.add('day-today');
     if (str === selectedStr) di.classList.add('day-selected');
 
@@ -238,12 +254,12 @@ function renderMonthBlock(container, y, m) {
     if (holidayName) {
       const tag = document.createElement('span');
       tag.className = 'day-status-tag tag-xiu';
-      tag.innerText = '休';
+      tag.textContent = '休';
       dayHeader.appendChild(tag);
     } else if (isMakeup) {
       const tag = document.createElement('span');
       tag.className = 'day-status-tag tag-ban';
-      tag.innerText = '班';
+      tag.textContent = '班';
       dayHeader.appendChild(tag);
     }
     di.appendChild(dayHeader);
@@ -253,7 +269,7 @@ function renderMonthBlock(container, y, m) {
     dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
-    num.innerText = day;
+    num.textContent = day;
     dayBody.appendChild(num);
     di.appendChild(dayBody);
 
@@ -264,12 +280,12 @@ function renderMonthBlock(container, y, m) {
     if (holidayName) {
       const hLbl = document.createElement('span');
       hLbl.className = 'holiday-label';
-      hLbl.innerText = holidayName;
+      hLbl.textContent = holidayName;
       dayFooter.appendChild(hLbl);
     } else if (work) {
       const badge = document.createElement('span');
       badge.className = 'workday-badge';
-      badge.innerText = `W${wCnt}`;
+      badge.textContent = `W${wCnt}`;
       dayFooter.appendChild(badge);
     }
 
@@ -299,7 +315,7 @@ function renderMonthBlock(container, y, m) {
     dayBody.className = 'day-body';
     const num = document.createElement('span');
     num.className = 'day-num';
-    num.innerText = day;
+    num.textContent = day;
     dayBody.appendChild(num);
 
     const dayFooter = document.createElement('div');
@@ -319,17 +335,17 @@ function renderMonthBlock(container, y, m) {
 function renderQuickMonthGrid() {
   const container = document.getElementById('quick-month-grid');
   if (!container) return;
-  container.innerHTML = '';
+  container.replaceChildren();
 
   const years = [2026, 2027];
 
   years.forEach(year => {
     const group = document.createElement('div');
-    group.className = 'quick-year-group';
+    group.className = 'quick-year-group' + (year === 2027 ? ' group-year-2027' : '');
 
     const groupHeader = document.createElement('div');
     groupHeader.className = 'quick-year-header' + (year === viewY ? ' current-year' : '');
-    groupHeader.innerText = `${year} 年`;
+    groupHeader.textContent = `${year} 年`;
     group.appendChild(groupHeader);
 
     const monthGrid = document.createElement('div');
@@ -349,11 +365,11 @@ function renderQuickMonthGrid() {
 
       const name = document.createElement('div');
       name.className = 'quick-month-name';
-      name.innerText = `${m + 1}月`;
+      name.textContent = `${m + 1}月`;
 
       const sub = document.createElement('div');
       sub.className = 'quick-month-sub';
-      sub.innerText = `${workdaysInMonth}天`;
+      sub.textContent = `${workdaysInMonth}天`;
 
       btn.appendChild(name);
       btn.appendChild(sub);
@@ -383,23 +399,23 @@ function renderDateDetail(d) {
   const yearDayEl = document.getElementById('detail-year-day');
   const holidayInfoEl = document.getElementById('detail-holiday-info');
 
-  if (detailTag) detailTag.innerText = isToday ? '今日详情' : '选中日期详情';
-  if (dayNum) dayNum.innerText = d.getDate();
-  if (dateFull) dateFull.innerText = `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日 ${WD_NAMES[d.getDay()]}`;
+  if (detailTag) detailTag.textContent = isToday ? '今日详情' : '选中日期详情';
+  if (dayNum) dayNum.textContent = d.getDate();
+  if (dateFull) dateFull.textContent = `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日 ${WD_NAMES[d.getDay()]}`;
 
   // Work badge status styling
   if (workBadge) {
     if (holidayName) {
-      workBadge.innerText = `休 · ${holidayName}`;
+      workBadge.textContent = `休 · ${holidayName}`;
       workBadge.className = 'detail-work-badge status-holiday';
     } else if (isMakeup) {
-      workBadge.innerText = '班 · 调休上班';
+      workBadge.textContent = '班 · 调休上班';
       workBadge.className = 'detail-work-badge status-makeup';
     } else if (work) {
-      workBadge.innerText = '工作日';
+      workBadge.textContent = '工作日';
       workBadge.className = 'detail-work-badge';
     } else {
-      workBadge.innerText = '休息日';
+      workBadge.textContent = '休息日';
       workBadge.className = 'detail-work-badge status-rest';
     }
   }
@@ -410,19 +426,26 @@ function renderDateDetail(d) {
     for (let day = 1; day <= d.getDate(); day++) {
       if (isWork(new Date(d.getFullYear(), d.getMonth(), day))) wIndex++;
     }
-    if (wIndexEl) wIndexEl.innerText = `本月第 ${wIndex} 个工作日`;
+    if (wIndexEl) wIndexEl.textContent = `本月第 ${wIndex} 个工作日`;
   } else {
-    if (wIndexEl) wIndexEl.innerText = '非工作日';
+    if (wIndexEl) wIndexEl.textContent = '非工作日';
   }
 
   // Day of year calculation
-  if (yearDayEl) yearDayEl.innerText = `当年第 ${getDayOfYear(d)} 天`;
+  if (yearDayEl) yearDayEl.textContent = `当年第 ${getDayOfYear(d)} 天`;
 
   // Countdown to next statutory holiday
+  // 按照规范：金黄 20% 浅底 #FDF5DB + 深黄文字 #7A6210，图标赭红
   if (holidayInfoEl) {
+    holidayInfoEl.replaceChildren();
     if (holidayName) {
-      holidayInfoEl.innerHTML = `<i class="ph-fill ph-confetti"></i> 今天是 ${holidayName} 假期！`;
+      holidayInfoEl.className = 'detail-holiday-info is-holiday-today';
+      const icon = document.createElement('i');
+      icon.className = 'ph-fill ph-confetti';
+      holidayInfoEl.appendChild(icon);
+      holidayInfoEl.appendChild(document.createTextNode(` 今天是 ${holidayName} 假期！`));
     } else {
+      holidayInfoEl.className = 'detail-holiday-info';
       let nextHDate = null;
       let nextHName = '';
       const sortedH = Object.keys(DATA.h).sort();
@@ -443,9 +466,15 @@ function renderDateDetail(d) {
           if (isWork(cur)) workdaysLeft++;
           cur.setDate(cur.getDate() + 1);
         }
-        holidayInfoEl.innerHTML = `<i class="ph-fill ph-hourglass"></i> 距【${nextHName}】还需工作 ${workdaysLeft} 天`;
+        const icon = document.createElement('i');
+        icon.className = 'ph-fill ph-hourglass';
+        holidayInfoEl.appendChild(icon);
+        holidayInfoEl.appendChild(document.createTextNode(` 距【${nextHName}】还需工作 ${workdaysLeft} 天`));
       } else {
-        holidayInfoEl.innerHTML = `<i class="ph-fill ph-sparkle"></i> 法定节假日已全部过完`;
+        const icon = document.createElement('i');
+        icon.className = 'ph-fill ph-sparkle';
+        holidayInfoEl.appendChild(icon);
+        holidayInfoEl.appendChild(document.createTextNode(` 法定节假日已全部过完`));
       }
     }
   }
@@ -455,17 +484,17 @@ function renderDateDetail(d) {
 function renderYearView() {
   const container = document.getElementById('year-grid');
   if (!container) return;
-  container.innerHTML = '';
+  container.replaceChildren();
 
   const years = [2026, 2027];
 
   years.forEach(year => {
     const yearSection = document.createElement('div');
-    yearSection.className = 'year-overview-section';
+    yearSection.className = 'year-overview-section' + (year === 2027 ? ' section-2027' : '');
 
     const sectionTitle = document.createElement('div');
     sectionTitle.className = 'year-overview-title';
-    sectionTitle.innerText = `${year} 年图谱`;
+    sectionTitle.textContent = `${year} 年图谱`;
     yearSection.appendChild(sectionTitle);
 
     const grid = document.createElement('div');
@@ -477,16 +506,16 @@ function renderYearView() {
 
       const title = document.createElement('div');
       title.className = 'year-mini-title';
-      title.innerText = `${m + 1}月`;
+      title.textContent = `${m + 1}月`;
       monthCard.appendChild(title);
 
       const miniGrid = document.createElement('div');
       miniGrid.className = 'year-mini-grid';
 
-      WD_NAMES_SHORT.forEach(txt => {
+      WD_NAMES_SHORT.forEach((txt, idx) => {
         const lbl = document.createElement('div');
-        lbl.className = 'mini-day-lbl';
-        lbl.innerText = txt;
+        lbl.className = 'mini-day-lbl' + (idx >= 5 ? ' weekend' : '');
+        lbl.textContent = txt;
         miniGrid.appendChild(lbl);
       });
 
@@ -497,7 +526,7 @@ function renderYearView() {
       for (let i = firstD - 1; i >= 0; i--) {
         const box = document.createElement('div');
         box.className = 'mini-day-box muted';
-        box.innerText = prevMDays - i;
+        box.textContent = prevMDays - i;
         miniGrid.appendChild(box);
       }
 
@@ -510,7 +539,7 @@ function renderYearView() {
 
         const box = document.createElement('div');
         box.className = 'mini-day-box';
-        box.innerText = day;
+        box.textContent = day;
 
         if (isHoliday) box.classList.add('m-holiday');
         else if (isMakeup) box.classList.add('m-makeup');
@@ -564,38 +593,45 @@ function calc() {
   const mTxt = document.getElementById('m-prog-txt');
   const mBar = document.getElementById('m-prog-bar');
   const mSum = document.getElementById('m-summary');
-  if (mTxt) mTxt.innerText = mPct + '%';
+  if (mTxt) mTxt.textContent = mPct + '%';
   if (mBar) mBar.style.width = mPct + '%';
-  if (mSum) mSum.innerText = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
+  if (mSum) mSum.textContent = `已工作 ${mp} 天，剩余 ${mt - mp} 天`;
 
   const yTxt = document.getElementById('y-prog-txt');
   const yBar = document.getElementById('y-prog-bar');
   const ySum = document.getElementById('y-summary');
-  if (yTxt) yTxt.innerText = yPct + '%';
+  if (yTxt) yTxt.textContent = yPct + '%';
   if (yBar) yBar.style.width = yPct + '%';
 
   if (ySum) {
     if (t.getFullYear() === currentCalcYear) {
       const yDaysPast = Math.floor((t - new Date(currentCalcYear, 0, 1)) / 86400000) + 1;
-      ySum.innerText = `${currentCalcYear}年已过去 ${yDaysPast} 天`;
+      ySum.textContent = `${currentCalcYear}年已过去 ${yDaysPast} 天`;
     } else if (t.getFullYear() > currentCalcYear) {
-      ySum.innerText = `${currentCalcYear}年已全部结束`;
+      ySum.textContent = `${currentCalcYear}年已全部结束`;
     } else {
-      ySum.innerText = `${currentCalcYear}年尚未开始`;
+      ySum.textContent = `${currentCalcYear}年尚未开始`;
     }
   }
 
   const hPass = document.getElementById('h-pass');
   const hRem = document.getElementById('h-rem');
-  if (hPass) hPass.innerText = hp;
-  if (hRem) hRem.innerText = hr;
+  if (hPass) hPass.textContent = hp;
+  if (hRem) hRem.textContent = hr;
 }
 
 // ─── Upcoming Holidays Counter Cards ───
+// 规范：
+// 节日名称（元旦/春节…）：赭红 #C65840
+// 日期范围文字：中性灰 #6B7280
+// 还剩 N 个工作日 tag:
+// - N ≥ 30: 天蓝浅底 #E8F4F8 + 深青文字（普通信息）
+// - N < 30: 金黄浅底 #FDF5DB + 深黄文字 #7A6210（临期提醒）
+// - 进行中: 深青浅阶
 function updateHolidays() {
   const list = document.getElementById('holiday-list');
   if (!list) return;
-  list.innerHTML = '';
+  list.replaceChildren();
 
   const holidays = [];
   const sortedDates = Object.keys(DATA.h).sort();
@@ -633,13 +669,13 @@ function updateHolidays() {
 
     const name = document.createElement('div');
     name.className = 'h-name';
-    name.innerText = h.name;
+    name.textContent = h.name;
 
     const dates = document.createElement('div');
     dates.className = 'h-dates';
     const startStr = `${h.start.getFullYear() !== t.getFullYear() ? h.start.getFullYear() + '年' : ''}${h.start.getMonth() + 1}月${h.start.getDate()}日`;
     const endStr = `${h.end.getFullYear() !== t.getFullYear() && h.end.getFullYear() !== h.start.getFullYear() ? h.end.getFullYear() + '年' : ''}${h.end.getMonth() + 1}月${h.end.getDate()}日`;
-    dates.innerText = startStr === endStr ? startStr : `${startStr} - ${endStr}`;
+    dates.textContent = startStr === endStr ? startStr : `${startStr} - ${endStr}`;
 
     left.appendChild(name);
     left.appendChild(dates);
@@ -649,11 +685,15 @@ function updateHolidays() {
 
     const badge = document.createElement('span');
     if (h.start > t) {
-      badge.className = 'h-badge';
-      badge.innerText = `还剩 ${workdaysUntil} 个工作日`;
+      if (workdaysUntil < 30) {
+        badge.className = 'h-badge tag-urgent';
+      } else {
+        badge.className = 'h-badge';
+      }
+      badge.textContent = `还剩 ${workdaysUntil} 个工作日`;
     } else {
       badge.className = 'h-badge ongoing';
-      badge.innerText = '进行中';
+      badge.textContent = '进行中';
     }
     right.appendChild(badge);
 
