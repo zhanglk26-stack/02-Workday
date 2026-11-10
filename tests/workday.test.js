@@ -144,3 +144,58 @@ test('smooth month navigation across year boundary in app logic', () => {
   assert.strictEqual(app.viewY(), 2026);
   assert.strictEqual(app.viewM(), 11);
 });
+
+test('W6 and W15 badges receive badge-milestone class', () => {
+  const elementsCreated = [];
+  const mockElement = (tag) => {
+    const el = {
+      tagName: tag,
+      className: '',
+      textContent: '',
+      style: {},
+      children: [],
+      appendChild: (child) => el.children.push(child),
+      replaceChildren: () => { el.children = []; },
+      classList: {
+        add: (cls) => {
+          el.className += ` ${cls}`;
+        },
+        remove: () => {}
+      }
+    };
+    elementsCreated.push(el);
+    return el;
+  };
+
+  const calWrapper = mockElement('div');
+  global.document = {
+    getElementById: (id) => {
+      if (id === 'cal-wrapper') return calWrapper;
+      return mockElement('div');
+    },
+    querySelectorAll: () => [],
+    createElement: mockElement,
+    createTextNode: (txt) => ({ textContent: txt }),
+    body: { setAttribute: () => {}, removeAttribute: () => {}, getAttribute: () => null }
+  };
+
+  const app = require('../app.js');
+  app.renderCalendar();
+
+  // Find all workday badge spans
+  const badges = elementsCreated.filter(el => typeof el.textContent === 'string' && el.textContent.startsWith('W'));
+  const w6 = badges.find(b => b.textContent === 'W6');
+  const w15 = badges.find(b => b.textContent === 'W15');
+  const w1 = badges.find(b => b.textContent === 'W1');
+  const w7 = badges.find(b => b.textContent === 'W7');
+
+  assert.ok(w6, 'W6 badge should exist in November 2026');
+  assert.ok(w15, 'W15 badge should exist in November 2026');
+  assert.ok(w6.className.includes('badge-milestone'), 'W6 should have badge-milestone class');
+  assert.ok(w15.className.includes('badge-milestone'), 'W15 should have badge-milestone class');
+
+  assert.ok(w1, 'W1 badge should exist');
+  assert.strictEqual(w1.className.includes('badge-milestone'), false, 'W1 should not have badge-milestone class');
+  assert.ok(w7, 'W7 badge should exist');
+  assert.strictEqual(w7.className.includes('badge-milestone'), false, 'W7 should not have badge-milestone class');
+});

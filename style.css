@@ -767,7 +767,7 @@ body {
   width: 100%;
 }
 
-/* 周数标签（W1~W21）：天蓝 15% 浅色阶 #E8F4F8 底 + 深青文字 #3F6F76，取消紫底 W 标签 */
+/* 周数标签（W1~W21）：天蓝 15% 浅色阶 #E8F4F8 底 + 深青文字 #3F6F76 */
 .workday-badge {
   font-size: 0.78rem;
   font-weight: 700;
@@ -775,6 +775,21 @@ body {
   background: var(--c-cyan-light);
   padding: 1px 6px;
   border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+/* W6 与 W15 里程碑工作日角标高亮：优雅灰紫浅底 + 灰紫文字与微边框 */
+.workday-badge.badge-milestone {
+  background: var(--c-plum-light);
+  color: var(--c-plum);
+  border: 1px solid rgba(98, 73, 111, 0.25);
+  font-weight: 800;
+}
+
+[data-theme="dark"] .workday-badge.badge-milestone {
+  background: rgba(135, 103, 152, 0.28);
+  color: #ccafe0;
+  border-color: rgba(135, 103, 152, 0.45);
 }
 
 .holiday-label {

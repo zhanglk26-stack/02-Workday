@@ -284,7 +284,8 @@ function renderMonthBlock(container, y, m) {
       dayFooter.appendChild(hLbl);
     } else if (work) {
       const badge = document.createElement('span');
-      badge.className = 'workday-badge';
+      const isMilestone = (wCnt === 6 || wCnt === 15);
+      badge.className = isMilestone ? 'workday-badge badge-milestone' : 'workday-badge';
       badge.textContent = `W${wCnt}`;
       dayFooter.appendChild(badge);
     }
