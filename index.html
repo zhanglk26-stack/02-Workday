@@ -2,126 +2,156 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>工作日看板 (2026-2027)</title>
+    <meta name="description" content="2026至2027年中国法定节假日、调休补班与工作日进度看板" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=9" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=10" />
   </head>
   <body>
     <div class="app-container">
 
-      <!-- Clean & Spacious Top Header -->
+      <!-- Single-line Compact Top Header -->
       <header class="app-header">
         <div class="header-left">
-          <div class="brand-badge">
-            <div class="brand-icon-box">
-              <i class="ph-fill ph-calendar-check"></i>
+          <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="17" rx="3" />
+                <path d="M8 2v4M16 2v4M3 10h18" />
+                <path d="M8.5 15.2l2.3 2.3 4.7-4.7" />
+              </svg>
             </div>
-            <span class="brand-title">工作日看板</span>
+            <h1 class="brand-title">工作日看板</h1>
             <span class="brand-year" id="brand-year">2026-2027</span>
-          </div>
-
-          <!-- Month Nav Arrow Buttons -->
-          <div class="header-month-nav" id="header-month-nav">
-            <div class="month-nav-group">
-              <button class="btn-circle" onclick="changeMonth(-1)" title="上个月">
-                <i class="ph ph-caret-left"></i>
-              </button>
-              <div class="current-month-display" id="month-display-text">2026年 11月</div>
-              <button class="btn-circle" onclick="changeMonth(1)" title="下个月">
-                <i class="ph ph-caret-right"></i>
-              </button>
-            </div>
           </div>
         </div>
 
         <div class="header-center">
-          <!-- View Switcher Tabs -->
-          <div class="view-tabs">
-            <button class="tab-btn active" id="tab-single" onclick="setViewMode('single')">
-              <i class="ph ph-calendar-blank"></i>
+          <nav class="view-tabs" aria-label="视图模式">
+            <button type="button" class="tab-btn active" id="tab-single" onclick="setViewMode('single')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="17" rx="2.5" />
+                <path d="M8 2v4M16 2v4M3 10h18" />
+              </svg>
               <span>单月</span>
             </button>
-            <button class="tab-btn" id="tab-dual" onclick="setViewMode('dual')">
-              <i class="ph ph-squares-four"></i>
+            <button type="button" class="tab-btn" id="tab-dual" onclick="setViewMode('dual')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="8" height="16" rx="2" />
+                <rect x="13" y="4" width="8" height="16" rx="2" />
+              </svg>
               <span>双月连看</span>
             </button>
-            <button class="tab-btn" id="tab-year" onclick="setViewMode('year')">
-              <i class="ph ph-grid-nine"></i>
+            <button type="button" class="tab-btn" id="tab-year" onclick="setViewMode('year')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
+                <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
+                <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
+                <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
+              </svg>
               <span>两年图谱</span>
             </button>
-          </div>
+          </nav>
         </div>
 
         <div class="header-right">
-          <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="切换主题">
-            <i id="theme-icon" class="ph ph-sun"></i>
+          <div class="header-month-nav" id="header-month-nav">
+            <div class="month-nav-group">
+              <button type="button" class="btn-nav" id="btn-prev-month" onclick="changeMonth(-1)" title="上个月 (左方向键)" aria-label="上个月">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <div class="current-month-display" id="month-display-text">2026年 11月</div>
+              <button type="button" class="btn-nav" id="btn-next-month" onclick="changeMonth(1)" title="下个月 (右方向键)" aria-label="下个月">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+            <button type="button" class="btn-today" id="btn-today-header" onclick="goToday()" title="回到今天 (快捷键 T)">
+              <span>回到今天</span>
+            </button>
+          </div>
+
+          <button type="button" class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="切换亮暗主题" aria-label="切换亮暗主题">
+            <svg id="theme-icon" class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
           </button>
         </div>
       </header>
 
-      <!-- Main Dashboard Grid Content -->
+      <!-- Main Three-Column Dashboard Workspace -->
       <main class="dashboard-container" id="dashboard-container">
 
-        <!-- Left Sidebar: Selected Date Detail Inspection Card & Quick Month Navigation -->
+        <!-- Left Sidebar: Selected Date Details & Quick Month Navigation -->
         <aside class="dash-left-sidebar">
-          <div class="dash-card date-detail-card" id="date-detail-card">
+          <section class="dash-card date-detail-card" id="date-detail-card" aria-label="日期详情">
             <div class="detail-header">
-              <span class="detail-tag" id="detail-tag">今日详情</span>
-              <span class="detail-work-badge" id="detail-work-badge">工作日</span>
+              <h2 class="section-heading" id="detail-tag">今日详情</h2>
+              <span class="detail-status" id="detail-work-badge">工作日</span>
             </div>
-            <div class="detail-body">
-              <div class="detail-day-num" id="detail-day-num">6</div>
-              <div class="detail-date-full" id="detail-date-full">2026年 11月 6日 星期五</div>
-              <div class="detail-pills">
-                <div class="pill-item">
-                  <i class="ph ph-briefcase"></i>
-                  <span id="detail-w-index">本月第 5 个工作日</span>
-                </div>
-                <div class="pill-item">
-                  <i class="ph ph-hourglass-high"></i>
-                  <span id="detail-year-day">当年第 310 天</span>
-                </div>
-              </div>
-              <div class="detail-holiday-info" id="detail-holiday-info">
-                <!-- Holiday status or countdown to next holiday -->
-              </div>
-            </div>
-          </div>
 
-          <!-- Quick Month Navigation Card -->
-          <div class="dash-card quick-nav-card">
-            <div class="card-title">
-              <i class="ph ph-compass"></i>
-              <span>月份导航 (2026 - 2027)</span>
+            <div class="detail-hero-row">
+              <div class="detail-day-num" id="detail-day-num">28</div>
+              <div class="detail-date-meta">
+                <div class="detail-date-full" id="detail-date-full">2026年 11月 28日 星期六</div>
+                <div class="detail-sub-meta" id="detail-sub-meta">查看日历中的任意一天</div>
+              </div>
+            </div>
+
+            <div class="detail-metrics">
+              <div class="detail-metric-row">
+                <span class="metric-label">月度工时序</span>
+                <span class="metric-value" id="detail-w-index">非工作日</span>
+              </div>
+              <div class="detail-metric-row">
+                <span class="metric-label">年内累计</span>
+                <span class="metric-value" id="detail-year-day">当年第 332 天</span>
+              </div>
+            </div>
+
+            <div class="detail-holiday-info" id="detail-holiday-info">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <section class="dash-card quick-nav-card" aria-label="月份快速跳转">
+            <div class="card-title-row">
+              <h2 class="section-heading">月份导航</h2>
+              <span class="section-meta">2026-2027</span>
             </div>
             <div class="quick-month-grid" id="quick-month-grid">
-              <!-- JS will populate 2-year month groups -->
+              <!-- JS populates 2026 & 2027 month grids -->
             </div>
-          </div>
+          </section>
         </aside>
 
-        <!-- Center Area: Main Calendar Card -->
-        <section class="dash-card dash-main-cal" id="dash-main-cal">
+        <!-- Center Stage: Calendar Grid(s) -->
+        <section class="dash-card dash-main-cal" id="dash-main-cal" aria-label="工作日历">
           <div class="cal-wrapper" id="cal-wrapper">
             <!-- Dynamically populated 1 or 2 calendar grids -->
           </div>
         </section>
 
-        <!-- Right Sidebar: Stats & Holidays Cards -->
+        <!-- Right Sidebar: Progress & Upcoming Holidays -->
         <aside class="dash-right-sidebar">
-
-          <!-- Progress Card -->
-          <div class="dash-card progress-card">
-            <div class="card-title">
-              <i class="ph-fill ph-chart-line-up"></i>
-              <span>工作进度</span>
+          <section class="dash-card progress-card" aria-label="工作进度统计">
+            <div class="card-title-row">
+              <h2 class="section-heading">工作进度</h2>
             </div>
 
-            <!-- Month Progress -->
             <div class="prog-group">
               <div class="prog-meta">
                 <span class="prog-label">当月进度</span>
@@ -133,7 +163,6 @@
               <div class="prog-sub" id="m-summary">已工作 0 天，剩余 0 天</div>
             </div>
 
-            <!-- Year Progress -->
             <div class="prog-group">
               <div class="prog-meta">
                 <span class="prog-label">年度完成度</span>
@@ -145,52 +174,54 @@
               <div class="prog-sub" id="y-summary">已过去 0 天</div>
             </div>
 
-            <!-- Counters -->
             <div class="counter-row">
               <div class="counter-box">
                 <span class="counter-num" id="h-pass">0</span>
                 <span class="counter-lbl">已休法定假</span>
               </div>
-              <div class="counter-box highlight">
+              <div class="counter-box">
                 <span class="counter-num" id="h-rem">0</span>
                 <span class="counter-lbl">剩余法定假</span>
               </div>
             </div>
-          </div>
+          </section>
 
-          <!-- Upcoming Holidays Card -->
-          <div class="dash-card holidays-card">
-            <div class="card-title">
-              <i class="ph-fill ph-sparkle"></i>
-              <span>假期倒计时</span>
+          <section class="dash-card holidays-card" aria-label="假期倒计时">
+            <div class="card-title-row">
+              <h2 class="section-heading">假期倒计时</h2>
+              <span class="section-meta">点击直达月份</span>
             </div>
             <div class="holiday-list" id="holiday-list">
-              <!-- Dynamically populated holiday countdown cards -->
+              <!-- Dynamically populated holiday countdown rows -->
             </div>
-          </div>
-
+          </section>
         </aside>
+
       </main>
 
-      <!-- Year Overview View Container -->
-      <section class="year-view-container" id="year-view-container" style="display: none;">
+      <!-- 2026-2027 Year Atlas View -->
+      <section class="year-view-container" id="year-view-container" style="display: none;" aria-label="两年图谱">
         <div class="year-header">
-          <div class="year-title">2026 - 2027 年法定节假日与工作日图谱</div>
+          <div class="year-header-text">
+            <h2 class="year-title">2026-2027 年法定节假日与工作日图谱</h2>
+            <p class="year-subtitle">点击任意月份标题进入单月视图，或点击具体日期查看详情</p>
+          </div>
           <div class="year-legend">
             <span class="legend-item"><span class="dot dot-work"></span>工作日</span>
             <span class="legend-item"><span class="dot dot-rest"></span>周末</span>
             <span class="legend-item"><span class="dot dot-holiday"></span>法定节假日</span>
             <span class="legend-item"><span class="dot dot-makeup"></span>调休上班</span>
+            <span class="legend-item"><span class="dot dot-today"></span>今天</span>
           </div>
         </div>
         <div class="year-grid" id="year-grid">
-          <!-- JS will populate 2-year mini month calendars -->
+          <!-- JS populates 2-year mini month calendars -->
         </div>
       </section>
 
     </div>
 
-    <script src="workday.js?v=9"></script>
-    <script src="app.js?v=9"></script>
+    <script src="workday.js?v=10"></script>
+    <script src="app.js?v=10"></script>
   </body>
 </html>
